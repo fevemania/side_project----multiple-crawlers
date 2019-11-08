@@ -6,7 +6,7 @@ from pprint import pprint
 
 conn = pymysql.connect(host='localhost', user='root', passwd='mypass', db='mysql', charset='utf8mb4')
 cur = conn.cursor()
-cur.execute('USE my_db')
+cur.execute('USE db')
 headers = {'User-Agent': 'Googlebot',}
 
 def shopee_scraper(keyword, n_items):

@@ -1,7 +1,7 @@
-version: '3.5'
+version: '3.7'
 services:
-    rabbitmq-server:
-        hostname: rabbitmq-server
+    rabbitmq:
+        hostname: rabbitmq
         image: rabbitmq:latest
         restart: always
         environment:
@@ -10,7 +10,10 @@ services:
         ports:
             - "5672:5672"
         labels:
-            NAME: "rabbitmq-server"
+            NAME: "rabbitmq"
+        volumes:
+            - rabbitmq:/var/lib/rabbitmq
+            - rabbitmq-logs:/var/log/rabbitmq
 
     db:
         image: mysql:latest
@@ -24,17 +27,19 @@ services:
             # <Port exposed> : < MySQL Port running inside container>
             - "3306:3306"
         volumes:
-            - mydb:/var/lib/mysql
+            - mysql:/var/lib/mysql
 
-    category_receiver:
+    category_worker:
         build: .
         depends_on:
-            - rabbitmq-server
+            - rabbitmq
        #links:
        #    - rabbitmq-server
         environment:
-            RABBIT_HOST: rabbitmq-server
-        command: ["./wait-for-it.sh", "rabbitmq-server:5672", "--", "python", "-u", "category_worker.py"]
+            RABBIT_HOST: rabbitmq
+        command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
 
 volumes:
-    mydb:
+    rabbitmq:
+    rabbitmq-logs:
+    mysql:
