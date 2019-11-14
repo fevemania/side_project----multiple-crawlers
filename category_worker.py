@@ -5,20 +5,18 @@ import time
 import socket
 import os
 import json
-import request
+import requests
 
 n_items=100
 offset = 0
 headers = {'User-Agent': 'Googlebot',}
 url_pattern = 'https://shopee.tw/api/v2/search_items/?by=pop&fe_categoryids={}&limit={}&newest={}'
-ch2 = None
-connection = None
 
 def callback(ch, method, properties, body):
     global offset
     row = json.loads(body)
-    r = request.get(url.format(row['category_id'], n_items, offset), headers=headers)
-    api_data = json.loads(r.text())
+    r = requests.get(url_pattern.format(row['category_id'], n_items, offset), headers=headers)
+    api_data = json.loads(r.text)
     product = {}
     try:
         while api_data['items'] is not None:
@@ -30,14 +28,13 @@ def callback(ch, method, properties, body):
                 ch2.basic_publish(
                     exchange='',
                     routing_key='products',
-                    body=json.dumps(product)
+                    body=json.dumps(product),
                     properties=pika.BasicProperties(
                         delivery_mode=2,
                     ))
             offset += n_items
-            r = request.get(url.format(row['category_id'], n_items, offset), headers=headers) 
-            api_data = json.loads(r.text())
-
+            r = requests.get(url_pattern.format(row['category_id'], n_items, offset), headers=headers) 
+            api_data = json.loads(r.text)
     except:
         connection.close()
             

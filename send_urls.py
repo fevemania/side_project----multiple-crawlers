@@ -15,7 +15,7 @@ headers = {'User-Agent': 'Googlebot',}
 def send_urls():
     cur.execute('SELECT category_id, category_name FROM categories')
     #result = cur.fetchall()
-    result = cur.fetclone()
+    result = cur.fetchall()
     credentials = pika.PlainCredentials('admin', 'mypass')
     connection = pika.BlockingConnection(
                 pika.ConnectionParameters(host='localhost', credentials=credentials))

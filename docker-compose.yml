@@ -15,8 +15,9 @@ services:
             - rabbitmq:/var/lib/rabbitmq
             - rabbitmq-logs:/var/log/rabbitmq
 
-    db:
-        image: mysql:latest
+    mysql:
+        image: mysql:5.7
+        hostname: mysql
         restart: always
         environment:
             MYSQL_DATABASE: 'db'
@@ -30,7 +31,9 @@ services:
             - mysql:/var/lib/mysql
 
     category_worker:
-        build: .
+        build:
+            context: .
+            dockerfile: src/category_worker/Dockerfile
         depends_on:
             - rabbitmq
        #links:
@@ -39,7 +42,29 @@ services:
             RABBIT_HOST: rabbitmq
         command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
 
+    fluentd:
+        build:
+            context: .
+            dockerfile: src/fluentd/Dockerfile
+        volumes:
+            - fluentd-conf:/fluentd/etc
+        ports:
+            - "9880:9880"
+        depends_on:
+            - mysql
+    worker:
+        build:
+            context: .
+            dockerfile: src/worker/Dockerfile
+        depends_on:
+            - rabbitmq
+            - fluentd
+        environment:
+            RABBIT_HOST: rabbitmq
+            FLUENTD_HOST: fluentd
+        command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "-u", "worker.py"]
 volumes:
     rabbitmq:
     rabbitmq-logs:
     mysql:
+    fluentd-conf:
