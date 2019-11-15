@@ -6,42 +6,64 @@ import socket
 import os
 import json
 import requests
+from downloader import Downloader
+from rate_limiter import RateLimiter
+from redis_cache import RedisCache
 
-n_items=100
-offset = 0
-headers = {'User-Agent': 'Googlebot',}
-url_pattern = 'https://shopee.tw/api/v2/search_items/?by=pop&fe_categoryids={}&limit={}&newest={}'
+class CategoryWorker:
+    def __init__(self, downloader):
+        self.downloader = downloader
+        self.category_url = 'https://shopee.tw/api/v2/search_items/?by=pop&fe_categoryids={}&limit={}&newest={}'
+        self.n_items = 100
+        self.offset = 0
+        self.ch2 = None
 
-def callback(ch, method, properties, body):
-    global offset
-    row = json.loads(body)
-    r = requests.get(url_pattern.format(row['category_id'], n_items, offset), headers=headers)
-    api_data = json.loads(r.text)
-    product = {}
-    try:
-        while api_data['items'] is not None:
-            for i in range(len(api_data['items'])):
-                item = api_data['items'][i]
-                product['itemid'] = item['itemid']
-                product['shopid'] = item['shopid']
-                product['name'] = item['name']
-                ch2.basic_publish(
-                    exchange='',
-                    routing_key='products',
-                    body=json.dumps(product),
-                    properties=pika.BasicProperties(
-                        delivery_mode=2,
-                    ))
-            offset += n_items
-            r = requests.get(url_pattern.format(row['category_id'], n_items, offset), headers=headers) 
-            api_data = json.loads(r.text)
-    except:
-        connection.close()
-            
+    def callback(self, ch, method, properties, body):
+        row = json.loads(body)
+        html = self.downloader(self.category_url.format(row['category_id'], self.n_items, self.offset))
+        print(row)
+        if html is not None:
+            pass
+            #api_data = json.loads(html)
+            #product = {}
+            #while api_data['items'] is not None:
+            #    for i in range(len(api_data['items'])):
+            #        item = api_data['items'][i]
+            #        product['itemid'] = item['itemid']
+            #        product['shopid'] = item['shopid']
+            #        product['name'] = item['name']
+            #        self.ch2.basic_publish(
+            #            exchange='',
+            #            routing_key='products',
+            #            body=json.dumps(product))
+            #            #properties=pika.BasicProperties(
+            #            #    delivery_mode=2,
+            #            #))
+            #    self.offset += self.n_items
+            #    html = self.downloader(self.category_url.format(row['category_id'], self.n_items, self.offset) 
+            #    api_data = json.loads(html)
+        else:
+            print('Oh no')
+        ch.basic_ack(delivery_tag=method.delivery_tag)
 
-        
-    ch.basic_ack(delivery_tag=method.delivery_tag)
-
+    def run(self):
+        try:
+            credentials = pika.PlainCredentials('admin', 'mypass')  
+            connection = pika.BlockingConnection(
+                pika.ConnectionParameters(host=os.environ.get('RABBIT_HOST', 'localhost'), credentials=credentials))
+            ch1 = connection.channel()
+            self.ch2 = connection.channel()
+            ch1.queue_declare(queue='categories', durable=True)
+            self.ch2.queue_declare(queue='products', durable=True)
+            ch1.basic_qos(prefetch_count=1)
+            ch1.basic_consume(
+                queue='categories', on_message_callback=self.callback)
+            ch1.start_consuming()
+        except:
+            connection = None
+        finally:
+            if connection is not None:
+                connection.close()
 #def is_open(ip, port):
 #    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #    try:
@@ -53,21 +75,9 @@ def callback(ch, method, properties, body):
 
 if __name__ == '__main__':
 #   is_open(os.environ.get('RABBIT_HOST'), 5672)
-    try:
-        global ch2 
-        global connection
-        credentials = pika.PlainCredentials('admin', 'mypass')
-        connection = pika.BlockingConnection(
-                pika.ConnectionParameters(host=os.environ.get('RABBIT_HOST', 'localhost'), credentials=credentials))
-        ch1 = connection.channel()
-        ch2 = connection.channel()
-        ch1.queue_declare(queue='categories', durable=True)
-        ch2.queue_declare(queue='products', durable=True)
-        ch1.basic_qos(prefetch_count=1)
-        ch1.basic_consume(
-                queue='categories', on_message_callback=callback)
-        ch1.start_consuming()
-    except:
-        sys.exit(2)
-    finally:
-        connection.close()
+    rate_limiter = RateLimiter()
+    redis_cache = RedisCache()
+    downloader = Downloader(rate_limiter, cache=redis_cache)
+    category_worker = CategoryWorker(downloader)
+    category_worker.run()
+    

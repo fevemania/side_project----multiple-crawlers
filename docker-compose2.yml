@@ -30,6 +30,7 @@ services:
         volumes:
             - mysql:/var/lib/mysql
 
+
     fluentd:
         build:
             context: .
@@ -40,6 +41,7 @@ services:
             - "9880:9880"
         depends_on:
             - mysql
+    
     redis:
         image: redis:alpine
         restart: always
@@ -47,6 +49,30 @@ services:
             - "6379:6379"
         volumes:
             - redis:/var/lib/redis
+    
+    category_worker:
+        build:
+            context: .
+            dockerfile: src/category_worker/Dockerfile
+        depends_on:
+            - rabbitmq
+       #links:
+       #    - rabbitmq-server
+        environment:
+            RABBIT_HOST: rabbitmq
+        command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
+    
+    worker:
+        build:
+            context: .
+            dockerfile: src/worker/Dockerfile
+        depends_on:
+            - rabbitmq
+            - fluentd
+        environment:
+            RABBIT_HOST: rabbitmq
+            FLUENTD_HOST: fluentd
+        command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "-u", "worker.py"]
 
 volumes:
     rabbitmq:

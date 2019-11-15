@@ -22,6 +22,7 @@ def send_urls():
     channel = connection.channel()
     channel.queue_declare(queue='categories', durable=True)
     for row in result:
+        print(row)
         channel.basic_publish(
             exchange='', 
             routing_key='categories', 
