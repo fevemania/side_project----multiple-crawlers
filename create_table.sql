@@ -4,7 +4,7 @@ CREATE TABLE categories (
     category_name TEXT NOT NULL,
     PRIMARY KEY(id),
     UNIQUE(category_id)
-) CHARACTER SET utf8;
+) CHARACTER SET utf8mb4;
 
 
 CREATE TABLE products (

@@ -4,29 +4,42 @@ import pika
 import requests
 import json
 from time import time
-from pprint import pprint
 import socket
 import redis
 from downloader import Downloader
 from rate_limiter import RateLimiter
 from redis_cache import RedisCache
+import pdb
 
 class ProductCrawler:
     def __init__(self, downloader, fluentd_port=9880):
         self.downloader = downloader
-        address = socket.gethostbyname(os.environ.get('FLUENTD_HOST', 'locahost'))
+        address = socket.gethostbyname(os.environ.get('FLUENTD_HOST', 'localhost'))
         self.product_url = 'https://shopee.tw/api/v2/item/get?itemid={}&shopid={}'
         self.fluentd_url = 'http://{}:{}/mysql.access'.format(address, fluentd_port)
 
     def callback(self, ch, method, properties, body):
-        product = json.loads(body)
-        html = self.downloader(self.product_url.format(product['itemid'], product['shopid']))
-        if html is not None:
-            api_data = json.loads(html)
-            product['price_min'] = api_data['item']['price_min'] / 100000
-            product['price_max'] = api_data['item']['price_max'] / 100000
-            requests.get(self.fluentd_url, json=product)    
-            ch.basic_ack(delivery_tag=method.delivery_tag)
+        record = json.loads(body)
+        html = self.downloader(self.product_url.format(record['itemid'], record['shopid']))
+        product = {}
+        product['product_id'] = record['itemid']
+        product['product_name'] = record['name']
+        product['category_id'] = record['category_id']
+        try:
+            if html is not None:
+                api_data = json.loads(html)
+                product['price_min'] = api_data['item']['price_min'] / 100000
+                product['price_max'] = api_data['item']['price_max'] / 100000
+                print(product)
+                requests.get(self.fluentd_url, json=product)    
+            else:
+                print('product html is None')
+        except Exception as e:
+            print(e)
+            pdb.set_trace()
+            print('product callback exception')
+
+        ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
 if __name__ == '__main__':

@@ -30,6 +30,7 @@ def send_categories():
             #properties=pika.BasicProperties(
             #    delivery_mode=2,  
             #))
+        break
     connection.close()
 
 if __name__ == '__main__':
