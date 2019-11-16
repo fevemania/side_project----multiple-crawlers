@@ -22,7 +22,7 @@ class Downloader:
         #if result and self.num_retries and 500 <= result['code'] < 600:
         #    result = None
         if result is None:
-            self.rate_limiter.check()
+            self.rate_limiter.wait()
             result = self.download(url, self.headers, self.proxies) # to-do: proxies
             self.cache[url] = result
         return result['html']
@@ -32,7 +32,7 @@ class Downloader:
         try:
             resp = requests.get(url, headers=headers, proxies=proxies, timeout=self.timeout)
             html = resp.text
-            if html.status_code >= 400:
+            if resp.status_code >= 400:
                 print('Download error:', resp.text)
                 html = None
                 if self.num_retries and 500 <= resp.status < 600:

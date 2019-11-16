@@ -1,2 +1,6 @@
-CREATE DATABASE `my_db` character set UTF8;
-GRANT ALL PRIVILEGES ON my_db.* TO 'admin'@'localhost';
+
+CREATE DATABASE `db` CHARACTER SET utf8mb4;
+ALTER DATABASE `db` CHARACTER SET utf8mb4;
+
+GRANT ALL PRIVILEGES ON db.* TO 'admin'@'localhost';
+ALTER TABLE products CONVERT TO CHARACTER SET utf8mb4;

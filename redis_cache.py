@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
 from redis import StrictRedis
 import json
+import os
 
 class RedisCache:
-    def __init__(self, expires=timedelta(seconds=1), encoding='utf-8'):
-        self.client = StrictRedis(host='redis', port=6379, db=0)
+    def __init__(self, expires=timedelta(seconds=10), encoding='utf-8'):
+        self.client = StrictRedis(host=os.environ.get('REDIS_HOST', 'localhost'), port=6379, db=0)
         self.expires = expires
         self.encoding = encoding
 

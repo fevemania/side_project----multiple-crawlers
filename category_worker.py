@@ -20,30 +20,26 @@ class CategoryWorker:
 
     def callback(self, ch, method, properties, body):
         row = json.loads(body)
-        html = self.downloader(self.category_url.format(row['category_id'], self.n_items, self.offset))
-        print(row)
-        if html is not None:
-            pass
-            #api_data = json.loads(html)
-            #product = {}
-            #while api_data['items'] is not None:
-            #    for i in range(len(api_data['items'])):
-            #        item = api_data['items'][i]
-            #        product['itemid'] = item['itemid']
-            #        product['shopid'] = item['shopid']
-            #        product['name'] = item['name']
-            #        self.ch2.basic_publish(
-            #            exchange='',
-            #            routing_key='products',
-            #            body=json.dumps(product))
-            #            #properties=pika.BasicProperties(
-            #            #    delivery_mode=2,
-            #            #))
-            #    self.offset += self.n_items
-            #    html = self.downloader(self.category_url.format(row['category_id'], self.n_items, self.offset) 
-            #    api_data = json.loads(html)
-        else:
-            print('Oh no')
+        while True:
+            html = self.downloader(self.category_url.format(row['category_id'], self.n_items, self.offset))
+            if html is None: break
+            api_data = json.loads(html)
+            if api_data['items'] is None: break
+            product = {}
+            for i in range(len(api_data['items'])):
+                item = api_data['items'][i]
+                product['itemid'] = item['itemid']
+                product['shopid'] = item['shopid']
+                product['name'] = item['name']
+                self.ch2.basic_publish(
+                    exchange='',
+                    routing_key='products',
+                    body=json.dumps(product))
+                    #properties=pika.BasicProperties(
+                    #    delivery_mode=2,
+                    #))
+            self.offset += self.n_items
+        
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def run(self):

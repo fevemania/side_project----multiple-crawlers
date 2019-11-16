@@ -12,7 +12,7 @@ cur = conn.cursor()
 cur.execute('USE db')
 headers = {'User-Agent': 'Googlebot',}
 
-def send_urls():
+def send_categories():
     cur.execute('SELECT category_id, category_name FROM categories')
     #result = cur.fetchall()
     result = cur.fetchall()
@@ -26,15 +26,15 @@ def send_urls():
         channel.basic_publish(
             exchange='', 
             routing_key='categories', 
-            body=json.dumps(row),
-            properties=pika.BasicProperties(
-                delivery_mode=2,  
-            ))
+            body=json.dumps(row))
+            #properties=pika.BasicProperties(
+            #    delivery_mode=2,  
+            #))
     connection.close()
 
 if __name__ == '__main__':
     try:
-        send_urls()
+        send_categories()
     finally:
         cur.close()
         conn.close()

@@ -60,6 +60,7 @@ services:
        #    - rabbitmq-server
         environment:
             RABBIT_HOST: rabbitmq
+            REDIS_HOST: redis
         command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
     
     worker:
@@ -71,6 +72,7 @@ services:
             - fluentd
         environment:
             RABBIT_HOST: rabbitmq
+            REDIS_HOST: redis
             FLUENTD_HOST: fluentd
         command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "-u", "worker.py"]
 
