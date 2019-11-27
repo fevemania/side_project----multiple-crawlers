@@ -34,12 +34,13 @@ class Downloader:
             resp = requests.get(url, headers=headers, proxies=proxies, timeout=self.timeout)
             html = resp.text
             if resp.status_code >= 400:
-                print('Download error:', resp.text)
+                print('Download error:', resp.status_code)
                 html = None
                 if self.num_retries and 500 <= resp.status_code < 600:
                     self.num_retries -= 1
                     return self.download(url, headers, proxies)
         except requests.exceptions.RequestException as e:
             print('Download error:', e)
+            print('here')
             return {'html': None, 'code': 500}
         return {'html': html, 'code': resp.status_code}

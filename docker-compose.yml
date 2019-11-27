@@ -52,16 +52,16 @@ services:
             - 9880:9880
           #      - 24224:24224/udp
     
-    category_worker:
-        build: 
-            context: .
-            dockerfile: ./conf/category_worker/Dockerfile
-        depends_on:
-            - rabbitmq
-        environment:
-            RABBIT_HOST: rabbitmq
-            REDIS_HOST: redis
-        command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
+#   category_worker:
+#       build: 
+#           context: .
+#           dockerfile: ./conf/category_worker/Dockerfile
+#       depends_on:
+#           - rabbitmq
+#       environment:
+#           RABBIT_HOST: rabbitmq
+#           REDIS_HOST: redis
+#       command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
 
     product_worker:
         build: 
