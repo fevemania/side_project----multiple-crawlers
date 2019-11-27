@@ -2,7 +2,7 @@ running step:
 
 1. run `docker-compose up --scale product_worker=5` to set up all the crawler procedure.
 
-2. open one tmux terminal, and run `docker exec -it  everblue_mysql_1 mysql -u admin -p`, and password is `mypass`
+2. open one tmux terminal, and run `docker exec -it  everblue_mysql_1 mysql -u admin -p`, and password is `mypass`, and type `use db;`
 
 3. copy and paste the context of create_table.sql into step2's terminal, then exit the terminal.
 

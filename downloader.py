@@ -1,4 +1,5 @@
 import requests
+import pdb
 
 class Downloader:
     def __init__(self, rate_limiter, user_agent='Googlebot', proxies=None, cache={}, timeout=60):
@@ -35,7 +36,7 @@ class Downloader:
             if resp.status_code >= 400:
                 print('Download error:', resp.text)
                 html = None
-                if self.num_retries and 500 <= resp.status < 600:
+                if self.num_retries and 500 <= resp.status_code < 600:
                     self.num_retries -= 1
                     return self.download(url, headers, proxies)
         except requests.exceptions.RequestException as e:

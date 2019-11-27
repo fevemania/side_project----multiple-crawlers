@@ -35,7 +35,6 @@ class ProductCrawler:
                 print('product html is None')
         except Exception as e:
             print(e)
-            pdb.set_trace()
             print('product callback exception')
 
         ch.basic_ack(delivery_tag=method.delivery_tag)

@@ -46,7 +46,6 @@ class CategoryWorker:
                 self.offset += self.n_items
             except Exception as e: 
                 print(e)
-                pdb.set_trace()
                 print('category callback exception')
         
         ch.basic_ack(delivery_tag=method.delivery_tag)
