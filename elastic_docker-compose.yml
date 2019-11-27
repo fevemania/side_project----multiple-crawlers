@@ -1,0 +1,37 @@
+version: '3'
+services:
+  apache:
+    image: httpd
+    ports:
+      - 80:80
+    links:
+      - fluentd
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: httpd.access
+
+  fluentd:
+    build: ./conf/fluentd
+    ports:
+      - 24224:24224
+      - 24224:24224/udp
+    links:
+      - elasticsearch
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
+    environment:
+      - discovery.type=single-node
+    expose:
+      - 9200
+    ports:
+      - 9200:9200
+
+  kibana:
+    image: kibana:7.2.0
+    ports:
+      - 5601:5601
+    links:
+      - elasticsearch

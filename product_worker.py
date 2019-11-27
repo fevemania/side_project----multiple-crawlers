@@ -16,7 +16,7 @@ class ProductCrawler:
         self.downloader = downloader
         address = socket.gethostbyname(os.environ.get('FLUENTD_HOST', 'localhost'))
         self.product_url = 'https://shopee.tw/api/v2/item/get?itemid={}&shopid={}'
-        self.fluentd_url = 'http://{}:{}/mysql.access'.format(address, fluentd_port)
+        self.fluentd_url = 'http://{}:{}/s3.http.access'.format(address, fluentd_port)
 
     def callback(self, ch, method, properties, body):
         record = json.loads(body)
@@ -30,7 +30,6 @@ class ProductCrawler:
                 api_data = json.loads(html)
                 product['price_min'] = api_data['item']['price_min'] / 100000
                 product['price_max'] = api_data['item']['price_max'] / 100000
-                print(product)
                 requests.get(self.fluentd_url, json=product)    
             else:
                 print('product html is None')

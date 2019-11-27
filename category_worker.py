@@ -39,12 +39,11 @@ class CategoryWorker:
                     self.ch2.basic_publish(
                         exchange='',
                         routing_key='products',
-                        body=json.dumps(product))
-                        #properties=pika.BasicProperties(
-                        #    delivery_mode=2,
-                        #))
+                        body=json.dumps(product),
+                        properties=pika.BasicProperties(
+                            delivery_mode=2,
+                        ))
                 self.offset += self.n_items
-                break
             except Exception as e: 
                 print(e)
                 pdb.set_trace()
