@@ -3,7 +3,7 @@ import time
 import os
 
 class RateLimiter:
-    def __init__(self, port=6379, rate_limit_per_second=30):
+    def __init__(self, port=6379, rate_limit_per_second=50):
         self.r = redis.StrictRedis(host=os.environ.get('REDIS_HOST', 'localhost'), port=6379, db=0)
         self.rate_limit_per_second = rate_limit_per_second
 
