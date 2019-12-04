@@ -61,7 +61,7 @@ services:
         environment:
             RABBIT_HOST: rabbitmq
             REDIS_HOST: redis
-        command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
+        command: ["./wait-for-it.sh", "-t", "30", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
 
     product_worker:
         build: 
@@ -74,7 +74,7 @@ services:
             RABBIT_HOST: rabbitmq
             REDIS_HOST: redis
             FLUENTD_HOST: fluentd
-        command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "-u", "product_worker.py"]
+        command: ["./wait-for-it.sh", "-t", "30", "rabbitmq:5672", "--", "python", "-u", "product_worker.py"]
 
 volumes:
     rabbitmq:
