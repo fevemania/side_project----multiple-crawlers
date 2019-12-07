@@ -16,12 +16,28 @@ COMMITID = $(shell git rev-parse HEAD)
 
 .PHONY: build_category_worker
 build_category_worker:
-		docker build -t registry.gitlab.com/fevemania/$(CATEGORY_WORKER_REPOPATH):$(CATEGORY_WORKER_VERSION) -f ./conf/category_worker/Dockerfile .
+		docker build -t registry.gitlab.com/fevemania/shopee_side_project/$(CATEGORY_WORKER_REPOPATH):$(CATEGORY_WORKER_VERSION) -f ./conf/category_worker/Dockerfile .
+
+.PHONY: push_category_worker
+push_category_worker:
+		docker push registry.gitlab.com/fevemania/shopee_side_project/$(CATEGORY_WORKER_REPOPATH):$(CATEGORY_WORKER_VERSION)
+
+#####
 
 .PHONY: build_product_worker
 build_product_worker:
-		docker build -t registry.gitlab.com/fevemania/$(PRODUCT_WORKER_REPOPATH):$(PRODUCT_WORKER_VERSION) -f ./conf/product_worker/Dockerfile .
+		docker build -t registry.gitlab.com/fevemania/shopee_side_project/$(PRODUCT_WORKER_REPOPATH):$(PRODUCT_WORKER_VERSION) -f ./conf/product_worker/Dockerfile .
+
+.PHONY: push_product_worker
+push_product_worker:
+		docker push registry.gitlab.com/fevemania/shopee_side_project/$(PRODUCT_WORKER_REPOPATH):$(PRODUCT_WORKER_VERSION)
+
+#####
 
 .PHONY: build_mysqldb
 build_mysqldb:
-		docker build -t registry.gitlab.com/fevemania/$(MYSQL_DB_WORKER_REPOPATH):$(MYSQL_DB_WORKER_VERSION) -f ./mysqldb/Dockerfile .
+		docker build -t registry.gitlab.com/fevemania/shopee_side_project/$(MYSQL_DB_WORKER_REPOPATH):$(MYSQL_DB_WORKER_VERSION) -f ./mysqldb/Dockerfile .
+
+.PHONY: push_mysqldb
+push_mysqldb:
+		docker push registry.gitlab.com/fevemania/shopee_side_project/$(MYSQL_DB_WORKER_REPOPATH):$(MYSQL_DB_WORKER_VERSION)
