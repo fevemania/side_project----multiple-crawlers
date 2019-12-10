@@ -10,6 +10,9 @@ MYSQL_DB_VERSION_NUMBER ?= 0.0.1 #Remeber to modify version number by each time 
 MYSQL_DB_WORKER_VERSION ?= v$(MYSQL_DB_VERSION_NUMBER)
 MYSQL_DB_WORKER_REPOPATH := mysqldb
 
+FLUENTD_VERSION_NUMBER ?= 0.0.1 #Remeber to modify version number by each time you modify this part
+FLUENTD_VERSION ?= v$(FLUENTD_VERSION_NUMBER)
+FLUENTD_REPOPATH := fluentd
 
 BUILDTIME = $(shell date --rfc-3339=seconds)
 COMMITID = $(shell git rev-parse HEAD)
@@ -41,3 +44,13 @@ build_mysqldb:
 .PHONY: push_mysqldb
 push_mysqldb:
 		docker push registry.gitlab.com/fevemania/shopee_side_project/$(MYSQL_DB_WORKER_REPOPATH):$(MYSQL_DB_WORKER_VERSION)
+
+#####
+
+.PHONY: build_fluentd
+build_fluentd:
+	    docker build -t registry.gitlab.com/fevemania/shopee_side_project/$(FLUENTD_REPOPATH):$(FLUENTD_VERSION) -f ./conf/fluentd/Dockerfile .
+
+.PHONY: push_fluentd
+push_fluentd:
+		docker push registry.gitlab.com/fevemania/shopee_side_project/$(FLUENTD_REPOPATH):$(FLUENTD_VERSION)
