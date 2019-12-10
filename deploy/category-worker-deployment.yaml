@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: category-worker
+  labels:
+    app: category-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: category-worker
+  template:
+    metadata:
+      labels:
+        app: category-worker
+    spec:
+      imagePullSecrets:
+      - name: gitlab-auth
+      containers:
+      - args:
+        - ./wait-for-it.sh
+        - rabbitmq:5672
+        - --
+        - python
+        - -u
+        - category_worker.py
+        env:
+        - name: RABBIT_HOST
+          value: rabbitmq
+        - name: REDIS_HOST
+          value: redis
+        image: registry.gitlab.com/fevemania/shopee_side_project/category_worker:v0.0.1
+        name: category-worker

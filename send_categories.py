@@ -6,7 +6,7 @@ from pprint import pprint
 import pika
 
 
-conn = pymysql.connect(host='localhost', user='root', passwd='mypass', db='mysql', charset='utf8mb4',
+conn = pymysql.connect(host='mysql', user='admin', passwd='mypass', db='mysql', charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor)
 cur = conn.cursor()
 cur.execute('USE db')
@@ -22,11 +22,11 @@ def send_categories():
     channel.queue_declare(queue='categories', durable=True)
     for row in result:
         channel.basic_publish(
-            exchange='', 
-            routing_key='categories', 
+            exchange='',
+            routing_key='categories',
             body=json.dumps(row),
             properties=pika.BasicProperties(
-                delivery_mode=2,  
+                delivery_mode=2,
             ))
     connection.close()
 

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      imagePullSecrets:
+      - name: gitlab-auth
+      containers:
+      - args:
+        - mysqld
+        - --character-set-server=utf8mb4
+        - --collation-server=utf8mb4_unicode_ci
+        env:
+        - name: MYSQL_DATABASE
+          value: db
+        - name: MYSQL_PASSWORD
+          value: mypass
+        - name: MYSQL_ROOT_PASSWORD
+          value: mypass
+        - name: MYSQL_USER
+          value: admin
+        image: registry.gitlab.com/fevemania/shopee_side_project/mysqldb:v0.0.1
+        name: mysql
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql
+      hostname: mysql
+      volumes:
+      - name: mysql
+        persistentVolumeClaim:
+          claimName: mysql

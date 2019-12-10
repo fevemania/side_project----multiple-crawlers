@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-worker
+  labels:
+    app: product-worker
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: product-worker
+    spec:
+      imagePullSecrets:
+      - name: gitlab-auth
+      containers:
+      - args:
+        - ./wait-for-it.sh
+        - rabbitmq:5672
+        - --
+        - python
+        - -u
+        - product_worker.py
+        env:
+        - name: FLUENTD_HOST
+          value: fluentd
+        - name: RABBIT_HOST
+          value: rabbitmq
+        - name: REDIS_HOST
+          value: redis
+        image: registry.gitlab.com/fevemania/shopee_side_project/product_worker:v0.0.1
+        name: product-worker
