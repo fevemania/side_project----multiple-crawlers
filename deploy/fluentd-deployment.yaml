@@ -15,7 +15,7 @@ spec:
         app: fluentd
     spec:
       containers:
-      - image: fluentd
+      - image: registry.gitlab.com/fevemania/shopee_side_project/fluentd:v0.0.1
         name: fluentd
         ports:
         - containerPort: 9880
