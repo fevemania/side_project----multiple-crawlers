@@ -6,7 +6,6 @@ from pprint import pprint
 
 conn = pymysql.connect(host='mysql', user='admin', passwd='mypass', db='db', charset='utf8mb4')
 cur = conn.cursor()
-cur.execute('USE db')
 headers = {'User-Agent': 'Googlebot',}
 
 def crawl_categories():

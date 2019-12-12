@@ -14,11 +14,11 @@ FLUENTD_VERSION_NUMBER ?= 0.0.1 #Remeber to modify version number by each time y
 FLUENTD_VERSION ?= v$(FLUENTD_VERSION_NUMBER)
 FLUENTD_REPOPATH := fluentd
 
-CATEGORY_CRAWLER_VERSION_NUMBER ?= 0.0.2 #Remeber to modify version number by each time you modify this part
+CATEGORY_CRAWLER_VERSION_NUMBER ?= 0.0.1 #Remeber to modify version number by each time you modify this part
 CATEGORY_CRAWLER_VERSION ?= v$(CATEGORY_CRAWLER_VERSION_NUMBER)
 CATEGORY_CRAWLER_REPOPATH := category_crawler
 
-SEND_CATEGORIES_VERSION_NUMBER ?= 0.0.2
+SEND_CATEGORIES_VERSION_NUMBER ?= 0.0.1
 SEND_CATEGORIES_VERSION ?= v$(SEND_CATEGORIES_VERSION_NUMBER)
 SEND_CATEGORIES_REPOPATH := send_categories
 

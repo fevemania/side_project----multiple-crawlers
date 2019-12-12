@@ -9,7 +9,6 @@ import pika
 conn = pymysql.connect(host='mysql', user='admin', passwd='mypass', db='db', charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor)
 cur = conn.cursor()
-cur.execute('USE db')
 headers = {'User-Agent': 'Googlebot',}
 
 def send_categories():
