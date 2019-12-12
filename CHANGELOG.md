@@ -1,5 +1,16 @@
 # CHANGELOG for DevOps
 
+## 2019/12/12
+
+- Create Dockerfile for category_crawler and send_categories as Kubernetes Job
+- Update Makefile
+- Modify category_crawler env for connect mysql
+- Modify send_categories env for connect mysql and rabbitmq
+- Modify command ang args
+- Update gitlab-auth in deployment
+- Update depend_on in deployment
+- Modify mysql Dockerfile
+
 ## 2019/12/10
 
 - Add deploy file for Kubernetes
