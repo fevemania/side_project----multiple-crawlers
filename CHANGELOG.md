@@ -10,6 +10,7 @@
 - Update gitlab-auth in deployment
 - Update depend_on in deployment
 - Modify mysql Dockerfile
+- Update category file and rebuild image
 
 ## 2019/12/10
 
