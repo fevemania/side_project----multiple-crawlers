@@ -17,7 +17,7 @@ spec:
       imagePullSecrets:
       - name: gitlab-auth
       containers:
-      - command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "-u", "product_worker.py"]
+      - command: ["./wait-for-it.sh", "-t", "30", "rabbitmq:5672", "--", "python", "-u", "product_worker.py"]
         env:
         - name: FLUENTD_HOST
           value: fluentd

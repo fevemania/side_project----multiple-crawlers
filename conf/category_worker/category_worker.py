@@ -30,8 +30,7 @@ class CategoryWorker:
                     print('wait')
                     time.sleep(10)
                 html = self.downloader(self.category_url.format(row['category_id'], self.n_items, self.offset))
-                if html is None: 
-                    pdb.set_trace()
+                if html is None:
                     break
                 api_data = json.loads(html)
                 if api_data['items'] is None:

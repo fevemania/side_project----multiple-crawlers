@@ -1,5 +1,6 @@
 import requests
 import pdb
+import time
 
 class Downloader:
     def __init__(self, rate_limiter, user_agent='Googlebot', proxies=None, cache={}, timeout=60):
@@ -41,6 +42,7 @@ class Downloader:
                     return self.download(url, headers, proxies)
         except requests.exceptions.RequestException as e:
             print('Download error:', e)
-            print('here')
+            print('wait')
+            time.sleep(30)
             return {'html': None, 'code': 500}
         return {'html': html, 'code': resp.status_code}
