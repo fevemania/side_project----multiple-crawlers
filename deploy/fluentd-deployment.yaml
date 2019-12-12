@@ -17,7 +17,7 @@ spec:
       imagePullSecrets:
       - name: gitlab-auth
       containers:
-      - image: registry.gitlab.com/fevemania/shopee_side_project/fluentd:v0.0.1
+      - image: registry.gitlab.com/fevemania/shopee_side_project/fluentd:v0.0.2
         name: fluentd
         ports:
         - containerPort: 9880
