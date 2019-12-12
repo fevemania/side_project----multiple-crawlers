@@ -17,13 +17,7 @@ spec:
       imagePullSecrets:
       - name: gitlab-auth
       containers:
-      - args:
-        - ./wait-for-it.sh
-        - rabbitmq:5672
-        - --
-        - python
-        - -u
-        - category_worker.py
+      - command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
         env:
         - name: RABBIT_HOST
           value: rabbitmq
@@ -31,3 +25,7 @@ spec:
           value: redis
         image: registry.gitlab.com/fevemania/shopee_side_project/category_worker:v0.0.1
         name: category-worker
+      initContainers:
+      - name: init-rabbitmq
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nslookup rabbitmq; do echo waiting for rabbitmq; sleep 2; done;']

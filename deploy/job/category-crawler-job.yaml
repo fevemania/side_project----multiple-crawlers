@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: category-crawler
+spec:
+  completions: 1
+  template:
+    metadata:
+      labels:
+        app: category-crawler
+    spec:
+      imagePullSecrets:
+      - name: gitlab-auth
+      containers:
+      - command: ["python", "category_crawler.py"]
+        image: registry.gitlab.com/fevemania/shopee_side_project/category_crawler:v0.0.2
+        name: category-crawler
+      initContainers:
+      - name: init-mysql
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nslookup mysql; do echo waiting for mysql; sleep 2; done;']
+      restartPolicy: Never
+  backoffLimit: 1

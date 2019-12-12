@@ -14,6 +14,14 @@ FLUENTD_VERSION_NUMBER ?= 0.0.1 #Remeber to modify version number by each time y
 FLUENTD_VERSION ?= v$(FLUENTD_VERSION_NUMBER)
 FLUENTD_REPOPATH := fluentd
 
+CATEGORY_CRAWLER_VERSION_NUMBER ?= 0.0.2 #Remeber to modify version number by each time you modify this part
+CATEGORY_CRAWLER_VERSION ?= v$(CATEGORY_CRAWLER_VERSION_NUMBER)
+CATEGORY_CRAWLER_REPOPATH := category_crawler
+
+SEND_CATEGORIES_VERSION_NUMBER ?= 0.0.2
+SEND_CATEGORIES_VERSION ?= v$(SEND_CATEGORIES_VERSION_NUMBER)
+SEND_CATEGORIES_REPOPATH := send_categories
+
 BUILDTIME = $(shell date --rfc-3339=seconds)
 COMMITID = $(shell git rev-parse HEAD)
 
@@ -54,3 +62,23 @@ build_fluentd:
 .PHONY: push_fluentd
 push_fluentd:
 		docker push registry.gitlab.com/fevemania/shopee_side_project/$(FLUENTD_REPOPATH):$(FLUENTD_VERSION)
+
+#####
+
+.PHONY: build_category_crawler
+build_category_crawler:
+		docker build -t registry.gitlab.com/fevemania/shopee_side_project/$(CATEGORY_CRAWLER_REPOPATH):$(CATEGORY_CRAWLER_VERSION) -f ./category/Dockerfile_category_crawler .
+
+.PHONY: push_category_crawler
+push_category_crawler:
+		docker push registry.gitlab.com/fevemania/shopee_side_project/$(CATEGORY_CRAWLER_REPOPATH):$(CATEGORY_CRAWLER_VERSION)
+
+#####
+
+.PHONY: build_send_categories
+build_send_categories:
+		docker build -t registry.gitlab.com/fevemania/shopee_side_project/$(SEND_CATEGORIES_REPOPATH):$(SEND_CATEGORIES_VERSION) -f ./category/Dockerfile_send_categories .
+
+.PHONY: push_send_categories
+push_send_categories:
+		docker push registry.gitlab.com/fevemania/shopee_side_project/$(SEND_CATEGORIES_REPOPATH):$(SEND_CATEGORIES_VERSION)

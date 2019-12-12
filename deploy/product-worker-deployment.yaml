@@ -5,7 +5,10 @@ metadata:
   labels:
     app: product-worker
 spec:
-  replicas: 1
+  replicas: 4
+  selector:
+    matchLabels:
+      app: product-worker
   template:
     metadata:
       labels:
@@ -14,13 +17,7 @@ spec:
       imagePullSecrets:
       - name: gitlab-auth
       containers:
-      - args:
-        - ./wait-for-it.sh
-        - rabbitmq:5672
-        - --
-        - python
-        - -u
-        - product_worker.py
+      - command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "python", "-u", "product_worker.py"]
         env:
         - name: FLUENTD_HOST
           value: fluentd
@@ -30,3 +27,10 @@ spec:
           value: redis
         image: registry.gitlab.com/fevemania/shopee_side_project/product_worker:v0.0.1
         name: product-worker
+      initContainers:
+      - name: init-rabbitmq
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nslookup rabbitmq; do echo waiting for rabbitmq; sleep 2; done;']
+      - name: init-fluentd
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nslookup fluentd; do echo waiting for fluentd; sleep 2; done;']

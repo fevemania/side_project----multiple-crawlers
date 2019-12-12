@@ -4,7 +4,7 @@ import time
 import pymysql
 from pprint import pprint
 
-conn = pymysql.connect(host='mysql', user='admin', passwd='mypass', db='mysql', charset='utf8mb4')
+conn = pymysql.connect(host='mysql', user='admin', passwd='mypass', db='db', charset='utf8mb4')
 cur = conn.cursor()
 cur.execute('USE db')
 headers = {'User-Agent': 'Googlebot',}

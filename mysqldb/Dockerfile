@@ -4,5 +4,4 @@ ENV MYSQL_USER admin
 ENV MYSQL_PASSWORD mypass
 ENV MYSQL_ROOT_PASSWORD mypass
 
-COPY ./mysqldb/ /docker-entrypoint-initdb.d/
-
+COPY ./mysqldb/create_table.sql /docker-entrypoint-initdb.d/create_table.sql

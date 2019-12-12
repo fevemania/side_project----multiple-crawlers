@@ -6,7 +6,7 @@ from pprint import pprint
 import pika
 
 
-conn = pymysql.connect(host='mysql', user='admin', passwd='mypass', db='mysql', charset='utf8mb4',
+conn = pymysql.connect(host='mysql', user='admin', passwd='mypass', db='db', charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor)
 cur = conn.cursor()
 cur.execute('USE db')
@@ -17,7 +17,7 @@ def send_categories():
     result = cur.fetchall()
     credentials = pika.PlainCredentials('admin', 'mypass')
     connection = pika.BlockingConnection(
-                pika.ConnectionParameters(host='localhost', credentials=credentials))
+                pika.ConnectionParameters(host='rabbitmq', credentials=credentials))
     channel = connection.channel()
     channel.queue_declare(queue='categories', durable=True)
     for row in result:
