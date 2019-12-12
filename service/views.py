@@ -5,6 +5,8 @@ from models import orm, Product, ProductSchema
 from sqlalchemy.exc import SQLAlchemyError
 from flask import current_app as app
 from sqlalchemy import func
+import re
+from collections import OrderedDict
 
 service_blueprint = Blueprint('service', __name__)
 # validate, serialize, and deserialize products.
@@ -14,18 +16,41 @@ service = Api(service_blueprint)
 
 class ProductResource(Resource):
     def get(self, keyword):
+        result = OrderedDict()
+        result['keyword'] = keyword
         keyword = "%{}%".format(keyword)
+        date_pattern = r"(\d{4}-\d{1,2}-\d{1,2})"
         #product = Product.query.filter(Product.data['item']['name'].like(keyword)).first()
         product = Product.query.filter(Product.data['item']['name'].astext.like(keyword))
         #app.logger.info(result)
         dumped_product = product_schema.dump(product, many=True).data
-        result = {} 
         for product in dumped_product:
-            name = product['data']['item']['name']
             timestamp = product['timestamp']
-            if result.get(name) is None:
-                result[name] = {'history price': {}, 'history volumes': {}, 'daily volumes': {}, 'daily avg price': {}, 'hot seller': {}}
-            result[name]['history price'][timestamp] = name
+            mat = re.search(date_pattern, timestamp)
+            timestamp = mat.group(0)
+            product = product['data']['item']
+            itemid = product['itemid']
+            sellerid = product['shopid']
+            name = product['name']
+            if result.get(timestamp) is None:
+                result[timestamp] = {'total_daily_sold_given_keyword': 0, 'total_daily_avg_price_min_given_keyword': 0.0,
+                        'total_daily_avg_price_max_given_keyword': 0.0, 'max_historical_sold': 0, 'hot_seller': None}
+                product_cnt = 0
+            if result[timestamp].get(itemid) is None:
+                product_cnt += 1
+                historical_sold = product['historical_sold']
+                if historical_sold > result[timestamp]['max_historical_sold']:
+                    result[timestamp]['max_historical_sold'] = historical_sold
+                    result[timestamp]['hot_seller'] = sellerid
+                
+                historical_price_max = product['price_max'] / 100000
+                historical_price_min = product['price_min'] / 100000
+                result[timestamp]['total_daily_sold_given_keyword'] += historical_sold
+                result[timestamp]['total_daily_avg_price_min_given_keyword'] = \
+                    result[timestamp]['total_daily_avg_price_min_given_keyword'] * ((product_cnt-1)/product_cnt) + historical_price_min / product_cnt
+                result[timestamp]['total_daily_avg_price_max_given_keyword'] = \
+                    result[timestamp]['total_daily_avg_price_max_given_keyword'] * ((product_cnt-1)/product_cnt) + historical_price_max / product_cnt
+                result[timestamp][itemid] = {'name': name, 'historical_sold': historical_sold, 'historical_price_min': historical_price_min, 'historical_price_max': historical_price_max, 'seller_id': sellerid}
 
         return result 
 
@@ -38,4 +63,4 @@ class ProductListResource(Resource):
 service.add_resource(ProductListResource,
     '/products/')
 service.add_resource(ProductResource,
-    '/products/<string:keyword>')
+        '/products/<string:keyword>')

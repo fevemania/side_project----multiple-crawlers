@@ -5,11 +5,12 @@ import time
 import socket
 import os
 import json
+import pdb
 import requests
 from downloader import Downloader
 from rate_limiter import RateLimiter
 from redis_cache import RedisCache
-import pdb
+
 
 class CategoryWorker:
     def __init__(self, downloader):
@@ -25,13 +26,17 @@ class CategoryWorker:
         while True:
             try:
                 self.product_queue = self.ch2.queue_declare(queue='products', durable=True, passive=True)
-                if self.product_queue.method.message_count >= 500:
-                    print(self.product_queue.method.message_count)
-                    print('wait')
+                while self.product_queue.method.message_count >= 500:
                     time.sleep(10)
+                    self.product_queue = self.product_queue = self.ch2.queue_declare(queue='products', durable=True, passive=True)
+
                 html = self.downloader(self.category_url.format(row['category_id'], self.n_items, self.offset))
+
                 if html is None: 
+                    print('fuck up')
+                    sys.exit(5)
                     break
+
                 api_data = json.loads(html)
                 if api_data['items'] is None:
                     self.offset = 0
@@ -39,10 +44,10 @@ class CategoryWorker:
                 product = {}
                 for i in range(len(api_data['items'])):
                     item = api_data['items'][i]
-                    product['category_id'] = row['category_id']
+#                   product['category_id'] = row['category_id']
                     product['itemid'] = item['itemid']
                     product['shopid'] = item['shopid']
-                    product['name'] = item['name']
+#                   product['name'] = item['name']
                     self.ch2.basic_publish(
                         exchange='',
                         routing_key='products',
@@ -88,7 +93,7 @@ if __name__ == '__main__':
 #   is_open(os.environ.get('RABBIT_HOST'), 5672)
     rate_limiter = RateLimiter()
     redis_cache = RedisCache()
-    downloader = Downloader(rate_limiter, cache=redis_cache, timeout=300)
+    downloader = Downloader(rate_limiter, cache=redis_cache)
     category_worker = CategoryWorker(downloader)
     category_worker.run()
     

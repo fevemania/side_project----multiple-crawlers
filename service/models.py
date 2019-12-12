@@ -31,3 +31,4 @@ class ProductSchema(ma.Schema):
     timestamp = fields.String(required=True)
     data = fields.Raw()
     #url = ma.URLFor('service.productresource', id='<id>', _external=True)
+

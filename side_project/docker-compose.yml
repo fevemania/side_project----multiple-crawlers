@@ -10,7 +10,8 @@ services:
    #            fluentd-address: localhost:9880
    #            tag: s3.apache.access
     mysql:
-        image: mysql:5.7
+        build: ./conf/mysql
+        #image: mysql:5.7
         hostname: mysql
         restart: always
         environment:
@@ -44,13 +45,15 @@ services:
         ports:
             - 6379:6379
         volumes:
-            - redis:/var/lib/redis
+            - redis:/data
 
     fluentd:
         build: ./conf/fluentd
         ports:
             - 9880:9880
           #      - 24224:24224/udp
+        volumes:
+            - fluentd:/fluentd/log
     
     category_worker:
         build: 
@@ -80,7 +83,7 @@ volumes:
     rabbitmq:
     redis:
     mysql:
-
+    fluentd:
  #minio:
  #  image: minio/minio:RELEASE.2019-10-12T01-39-57Z
  #  volumes:
