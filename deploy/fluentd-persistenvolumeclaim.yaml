@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: fluentd
+  labels:
+    type: local
+spec:
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: fluentd-log
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/fluentd"
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fluentd
+  labels:
+    app: fluentd
+spec:
+  storageClassName: fluentd-log
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi

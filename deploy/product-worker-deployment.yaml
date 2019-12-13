@@ -5,7 +5,7 @@ metadata:
   labels:
     app: product-worker
 spec:
-  replicas: 4
+  replicas: 8
   selector:
     matchLabels:
       app: product-worker
@@ -25,7 +25,7 @@ spec:
           value: rabbitmq
         - name: REDIS_HOST
           value: redis
-        image: registry.gitlab.com/fevemania/shopee_side_project/product_worker:v0.0.1
+        image: registry.gitlab.com/fevemania/shopee_side_project/product_worker:v0.0.2
         name: product-worker
       initContainers:
       - name: init-rabbitmq

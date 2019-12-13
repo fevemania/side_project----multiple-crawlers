@@ -29,7 +29,7 @@ spec:
           value: mypass
         - name: MYSQL_USER
           value: admin
-        image: registry.gitlab.com/fevemania/shopee_side_project/mysqldb:v0.0.1
+        image: registry.gitlab.com/fevemania/shopee_side_project/mysqldb:v0.0.2
         name: mysql
         ports:
         - containerPort: 3306

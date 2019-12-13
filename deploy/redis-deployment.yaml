@@ -20,7 +20,7 @@ spec:
         ports:
         - containerPort: 6379
         volumeMounts:
-        - mountPath: /var/lib/redis
+        - mountPath: /data
           name: redis
       volumes:
       - name: redis

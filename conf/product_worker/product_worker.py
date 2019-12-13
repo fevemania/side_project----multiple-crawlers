@@ -32,6 +32,7 @@ class ProductCrawler:
                 #product['price_max'] = api_data['item']['price_max'] / 100000
                 requests.get(self.fluentd_url, json=api_data)
             else:
+                print('Oh no')
                 print('product html is None')
         except Exception as e:
             print(e)
