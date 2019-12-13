@@ -12,4 +12,46 @@ running step:
 
 6. open another tmux terminal, and run `python send_categories.py` to sent all categories into rabbitmq, and trigger the crawler.
 
+# ----- For Kubernetes Production -----
 
+## Prepare your authorization for pull image
+
+```
+cat ~/.docker/config.json | base64 -w0
+```
+
+There will be base64 code, copy that and into and replace Form <your-bas364-code> in gitlab.yaml and save it. type
+
+```
+kubectl create -f gitlab-yaml
+```
+
+to create, after creating, you can check by:
+
+```
+kubectl get secrets
+```
+
+## Prepare Infrastructure
+
+```
+kubectl apply -f deploy/
+```
+
+And wait for all containers are running, you can check by:
+
+```
+kubectl get pods -o wide
+```
+
+## Start crawler and Send categories
+
+```
+kubectl apply -f deploy/job/category-crawler-job.yaml
+```
+
+Check for Job Compelete, and
+
+```
+kubectl apply -f deploy/job/send-categories-job.yaml
+```
