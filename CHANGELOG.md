@@ -1,5 +1,10 @@
 # CHANGELOG for DevOps
 
+## 2019/12/13
+- Merge code until Commit 784431fd
+- Add gitlab-auth.yaml
+- Update README.md for Kubernetes
+
 ## 2019/12/12
 
 - Create Dockerfile for category_crawler and send_categories as Kubernetes Job
