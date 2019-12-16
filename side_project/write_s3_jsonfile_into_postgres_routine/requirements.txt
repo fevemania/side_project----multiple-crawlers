@@ -1,0 +1,4 @@
+psycopg2
+boto3
+pytz
+python-dateutil<2.8.1
