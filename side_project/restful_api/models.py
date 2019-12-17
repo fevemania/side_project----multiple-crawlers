@@ -32,3 +32,16 @@ class ProductSchema(ma.Schema):
     data = fields.Raw()
     #url = ma.URLFor('service.productresource', id='<id>', _external=True)
 
+class Categories(orm.Model, ResourceAddUpdateDelete):
+    id = orm.Column(orm.Integer, primary_key=True)
+    category_id = orm.Column(orm.Integer, unique=True, nullable=False)
+    category_name = orm.Column(orm.String(50), nullable=False)
+    
+    def __init__(self, category_id, category_name):
+        self.category_id = category_id
+        self.category_name = category_name
+
+class CategoriesSchema(ma.Schema):
+    id = fields.Integer(dump_only=True)
+    category_id = fields.Integer(required=True)
+    category_name = fields.String(required=True)

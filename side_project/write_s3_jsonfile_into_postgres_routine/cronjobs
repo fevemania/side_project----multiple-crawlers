@@ -1,2 +1,0 @@
-*/30 * * * * python write_s3_jsonfile_into_postgres.py >> /log/cron.log
-
