@@ -43,9 +43,12 @@ class ProductCrawler:
 
 if __name__ == '__main__':
     try:
-        credentials = pika.PlainCredentials('admin', 'mypass')
+        RABBITMQ_USER = os.environ.get('RABBITMQ_USER')
+        RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD')
+        RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST')
+        credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASSWORD)
         connection = pika.BlockingConnection(
-                pika.ConnectionParameters(host=os.environ.get('RABBIT_HOST', 'localhost'), credentials=credentials))
+                pika.ConnectionParameters(host=RABBITMQ_HOST, credentials=credentials))
         ch = connection.channel()
         ch.queue_declare(queue='products', durable=True)
         ch.basic_qos(prefetch_count=1)

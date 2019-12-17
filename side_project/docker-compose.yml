@@ -13,36 +13,125 @@ services:
             - postgres:/var/lib/postgresql/data
             - './postgres_conf/init.sql:/docker-entrypoint-initdb.d/init.sql'
 
-    shopee_restful_api_service:
+    rabbitmq:
+        hostname: rabbitmq
+        image: rabbitmq
+        restart: always
+        environment:
+            - RABBITMQ_DEFAULT_USER=admin
+            - RABBITMQ_DEFAULT_PASS=mypass
+        ports:
+            - 5672:5672
+        labels:
+            NAME: rabbitmq
+        volumes:
+            - rabbitmq:/var/lib/rabbitmq
+
+    redis:
+        image: redis:alpine
+        restart: always
+        ports:
+            - 6379:6379
+        volumes:
+            - redis:/data
+    
+    fluentd:
+        build: ./shopee_crawler/fluentd
+        ports:
+            - 9880:9880
+          #      - 24224:24224/udp
+        volumes:
+            - fluentd:/fluentd/log
+
+    category_crawler:
         build:
             context: .
-            dockerfile: ./restful_api/Dockerfile
+            dockerfile: ./shopee_crawler/category_crawler/Dockerfile
         depends_on:
             - postgres
-        environment:
-            - POSTGRES_HOST=postgres
-        command: ["./wait-for-it.sh", "-t", "30", "postgres:5432", "--", "/bin/bash", "flask_run.sh"]
-        volumes:
-            - './restful_api/migrations:/migrations'
-    
-    # write new s3 data into postgres per helf hour.
-    write_s3_jsonfile_into_postgres_routine:
-        build:
-            context: .
-            dockerfile: ./write_s3_jsonfile_into_postgres_routine/Dockerfile
         environment:
             - POSTGRES_DB=db
             - POSTGRES_USER=admin
             - POSTGRES_PASSWORD=mypass
             - POSTGRES_HOST=postgres
             - POSTGRES_PORT=5432
-            - AWS_ACCESS_KEY_ID=AKIAJV2DQB4O6JV3O3XQ
-            - AWS_SECRET_ACCESS_KEY=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
-            - AWS_DEFAULT_REGION=ap-northeast-1
-        volumes:
-            - './write_s3_jsonfile_into_postgres_routine/log:/log'
-        command: ["./wait-for-it.sh", "-t", "30", "postgres:5432", "--", "cron", "-f"]
-       #command: ["./wait-for-it.sh", "-t", "30", "postgres:5432", "--", "python", "-u", "write_s3_jsonfile_into_postgres.py"]
+        command: ["./wait-for-it.sh", "-t", "30", "rabbitmq:5672", "--", "python", "-u", "category_crawler.py"]
+
+    shopee_crawler_routine:
+        build:
+            context: .
+            dockerfile: ./shopee_crawler/crawler_routine/Dockerfile
+        environment:
+            - POSTGRES_DB=db
+            - POSTGRES_USER=admin
+            - POSTGRES_PASSWORD=mypass
+            - POSTGRES_HOST=postgres
+            - POSTGRES_PORT=5432  
+            - RABBITMQ_USER=admin
+            - RABBITMQ_PASSWORD=mypass
+            - RABBITMQ_HOST=rabbitmq
+
+    category_worker:
+        build:
+            context: .
+            dockerfile: ./shopee_crawler/category_worker/Dockerfile
+        depends_on:
+            - rabbitmq
+        environment:
+            - RABBITMQ_USER=admin
+            - RABBITMQ_PASSWORD=mypass
+            - RABBITMQ_HOST=rabbitmq
+            - REDIS_HOST=redis
+        command: ["./wait-for-it.sh", "-t", "30", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
+
+    product_worker:
+        build:
+            context: .
+            dockerfile: ./shopee_crawler/product_worker/Dockerfile
+        depends_on:
+            - rabbitmq
+            - fluentd
+        environment:
+            - RABBITMQ_USER=admin
+            - RABBITMQ_PASSWORD=mypass
+            - RABBITMQ_HOST=rabbitmq
+            - REDIS_HOST=redis
+            - FLUENTD_HOST=fluentd
+        command: ["./wait-for-it.sh", "-t", "30", "rabbitmq:5672", "--", "python", "-u", "product_worker.py"]
+
+#   shopee_restful_api_service:
+#       build:
+#           context: .
+#           dockerfile: ./restful_api/Dockerfile
+#       depends_on:
+#           - postgres
+#       environment:
+#           - POSTGRES_HOST=postgres
+#       command: ["./wait-for-it.sh", "-t", "30", "postgres:5432", "--", "/bin/bash", "flask_run.sh"]
+#       volumes:
+#           - './restful_api/migrations:/migrations'
+#   
+#   # write new s3 data into postgres per helf hour.
+#   write_s3_jsonfile_into_postgres_routine:
+#       build:
+#           context: .
+#           dockerfile: ./write_s3_jsonfile_into_postgres_routine/Dockerfile
+#       environment:
+#           - POSTGRES_DB=db
+#           - POSTGRES_USER=admin
+#           - POSTGRES_PASSWORD=mypass
+#           - POSTGRES_HOST=postgres
+#           - POSTGRES_PORT=5432
+#           - AWS_ACCESS_KEY_ID=AKIAJV2DQB4O6JV3O3XQ
+#           - AWS_SECRET_ACCESS_KEY=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
+#           - AWS_DEFAULT_REGION=ap-northeast-1
+#       volumes:
+#           - './write_s3_jsonfile_into_postgres_routine/log:/log'
+#       command: ["./wait-for-it.sh", "-t", "30", "postgres:5432", "--", "cron", "-f"]
+#      #command: ["./wait-for-it.sh", "-t", "30", "postgres:5432", "--", "python", "-u", "write_s3_jsonfile_into_postgres.py"]
 
 volumes:
     postgres:
+    rabbitmq:
+    redis:
+    fluentd:        

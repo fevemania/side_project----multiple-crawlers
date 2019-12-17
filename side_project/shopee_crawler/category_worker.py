@@ -5,7 +5,6 @@ import time
 import socket
 import os
 import json
-import pdb
 import requests
 from downloader import Downloader
 from rate_limiter import RateLimiter
@@ -30,10 +29,11 @@ class CategoryWorker:
                     time.sleep(10)
                     self.product_queue = self.product_queue = self.ch2.queue_declare(queue='products', durable=True, passive=True)
 
-                html = self.downloader(self.category_url.format(row['category_id'], self.n_items, self.offset))
+                html = self.downloader(self.category_url.format(row[0], self.n_items, self.offset))
+              # html = self.downloader(self.category_url.format(row['category_id'], self.n_items, self.offset))
 
                 if html is None: 
-                    print('fuck up')
+                    print("Unexpected Error")
                     sys.exit(5)
                     break
 
@@ -64,9 +64,12 @@ class CategoryWorker:
 
     def run(self):
         try:
-            credentials = pika.PlainCredentials('admin', 'mypass')  
+            RABBITMQ_USER = os.environ.get('RABBITMQ_USER')
+            RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD')
+            RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST')
+            credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASSWORD)
             connection = pika.BlockingConnection(
-                pika.ConnectionParameters(host=os.environ.get('RABBIT_HOST', 'localhost'), credentials=credentials))
+                pika.ConnectionParameters(host=RABBITMQ_HOST, credentials=credentials))
             ch1 = connection.channel()
             self.ch2 = connection.channel()
             ch1.queue_declare(queue='categories', durable=True)
@@ -80,17 +83,8 @@ class CategoryWorker:
         finally:
             if connection is not None:
                 connection.close()
-#def is_open(ip, port):
-#    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#    try:
-#        s.connect((ip, int(port)))
-#        s.shutdown(2)
-#        print('True')
-#    except:
-#        print('False')
 
 if __name__ == '__main__':
-#   is_open(os.environ.get('RABBIT_HOST'), 5672)
     rate_limiter = RateLimiter()
     redis_cache = RedisCache()
     downloader = Downloader(rate_limiter, cache=redis_cache)
