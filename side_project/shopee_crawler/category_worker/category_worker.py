@@ -69,7 +69,7 @@ class CategoryWorker:
             RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST')
             credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASSWORD)
             connection = pika.BlockingConnection(
-                pika.ConnectionParameters(host=RABBITMQ_HOST, credentials=credentials)
+                pika.ConnectionParameters(host=RABBITMQ_HOST, credentials=credentials))
             ch1 = connection.channel()
             self.ch2 = connection.channel()
             ch1.queue_declare(queue='categories', durable=True)

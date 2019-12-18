@@ -1,14 +1,9 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: category-crawler
-  labels:
-    app: category-crawler
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: category-crawler
+  completions: 1
   template:
     metadata:
       labels:
@@ -35,3 +30,5 @@ spec:
       - name: init-postgres
         image: busybox:1.28
         command: ['sh', '-c', 'until nslookup postgres; do echo waiting for postgres; sleep 2; done;']
+      restartPolicy: Never
+  backoffLimit: 1

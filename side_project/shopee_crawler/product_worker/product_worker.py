@@ -46,6 +46,7 @@ if __name__ == '__main__':
         RABBITMQ_USER = os.environ.get('RABBITMQ_USER')
         RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD')
         RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST')
+        credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASSWORD)
         connection = pika.BlockingConnection(
                 pika.ConnectionParameters(host=RABBITMQ_HOST, credentials=credentials))
         ch = connection.channel()
