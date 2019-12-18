@@ -34,10 +34,6 @@ POSTGRES_ADDRESS = socket.gethostbyname(os.environ.get('POSTGRES_HOST'))
 connection = psycopg2.connect(database=POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD, host=POSTGRES_ADDRESS, port=POSTGRES_PORT)
 cursor = connection.cursor()
 
-show_new_filepath = []
-
-flag = False
-
 if objects.get('Contents') is not None:
     dirname = objects['Contents'][0]['Key'].split('/')[0]
     if not os.path.isdir(dirname):
@@ -47,7 +43,6 @@ if objects.get('Contents') is not None:
         if obj['LastModified'] > last_modified and path.endswith('.json'):
             if obj['LastModified'] > newest_modified:
                 newest_modified = obj['LastModified']
-            show_new_filepath.append(path)
             data = []
             s3.meta.client.download_file('dataforcrawl', path, path)
             with open(path, 'r') as f:
