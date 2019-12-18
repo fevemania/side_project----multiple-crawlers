@@ -110,6 +110,8 @@ services:
         command: ["./wait-for-it.sh", "-t", "30", "postgres:5432", "--", "/bin/bash", "flask_run.sh"]
         volumes:
             - './restful_api/migrations:/migrations'
+        ports:
+            - 5000:5000
     
     # write new s3 data into postgres per helf hour.
     write_s3_jsonfile_into_postgres_routine:

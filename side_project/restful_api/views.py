@@ -22,7 +22,7 @@ class ProductResource(Resource):
         date_pattern = r"(\d{4}-\d{1,2}-\d{1,2})"
         product = Product.query.filter(Product.data['item']['name'].astext.like(keyword))
         #app.logger.info(result)
-        dumped_product = product_schema.dump(product, many=True).data
+        dumped_product = product_schema.dump(product, many=True)
 
         for product in dumped_product:
             timestamp = product['timestamp']
@@ -61,7 +61,7 @@ class ProductResource(Resource):
 class ProductListResource(Resource):
     def get(self):
         products = Product.query.all()
-        dump_result = product_schema.dump(products, many=True).data
+        dump_result = product_schema.dump(products, many=True)
         return dump_result
 
 service.add_resource(ProductListResource,
