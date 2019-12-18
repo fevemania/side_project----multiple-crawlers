@@ -23,9 +23,13 @@ spec:
           value: fluentd
         - name: RABBIT_HOST
           value: rabbitmq
+        - name: RABBITMQ_PASSWORD
+          value: mypass
+        - name: RABBITMQ_USER
+          value: admin
         - name: REDIS_HOST
           value: redis
-        image: registry.gitlab.com/fevemania/shopee_side_project/product_worker:v0.0.2
+        image: registry.gitlab.com/fevemania/shopee_side_project/product_worker:v0.0.3
         name: product-worker
       initContainers:
       - name: init-rabbitmq

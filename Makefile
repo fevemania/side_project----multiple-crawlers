@@ -18,9 +18,9 @@ CATEGORY_CRAWLER_VERSION_NUMBER ?= 0.0.2 #Remeber to modify version number by ea
 CATEGORY_CRAWLER_VERSION ?= v$(CATEGORY_CRAWLER_VERSION_NUMBER)
 CATEGORY_CRAWLER_REPOPATH := category_crawler
 
-CRAWLER_ROUTINE_VERSION_NUMBER ?= 0.0.1 #Remeber to modify version number by each time you modify this part
-CRAWLER_ROUTINE_VERSION ?= v$(CRAWLER_ROUTINE_VERSION_NUMBER)
-CRAWLER_ROUTINE_REPOPATH := crawler_routine
+SHOPEE_CRAWLER_ROUTINE_VERSION_NUMBER ?= 0.0.1 #Remeber to modify version number by each time you modify this part
+SHOPEE_CRAWLER_ROUTINE_VERSION ?= v$(SHOPEE_CRAWLER_ROUTINE_VERSION_NUMBER)
+SHOPEE_CRAWLER_ROUTINE_REPOPATH := shopee_crawler_routine
 
 SHOPEE_RESTFUL_API_SERVICE_VERSION_NUMBER ?= 0.0.1 #Remeber to modify version number by each time you modify this part
 SHOPEE_RESTFUL_API_SERVICE_VERSION ?= v$(SHOPEE_RESTFUL_API_SERVICE_VERSION_NUMBER)
@@ -85,13 +85,13 @@ push_category_crawler:
 
 ##########
 
-.PHONY: build_crawler_routine
-build_crawler_routine:
-		docker build -t registry.gitlab.com/fevemania/shopee_side_project/$(CRAWLER_ROUTINE_REPOPATH):$(CRAWLER_ROUTINE_VERSION) -f ./side_project/shopee_crawler/crawler_routine/Dockerfile .
+.PHONY: build_shopee_crawler_routine
+build_shopee_crawler_routine:
+		docker build -t registry.gitlab.com/fevemania/shopee_side_project/$(SHOPEE_CRAWLER_ROUTINE_REPOPATH):$(SHOPEE_CRAWLER_ROUTINE_VERSION) -f ./side_project/shopee_crawler/crawler_routine/Dockerfile .
 
-.PHONY: push_crawler_routine
-push_crawler_routine:
-		docker push registry.gitlab.com/fevemania/shopee_side_project/$(CRAWLER_ROUTINE_REPOPATH):$(CRAWLER_ROUTINE_VERSION)
+.PHONY: push_shopee_crawler_routine
+push_shopee_crawler_routine:
+		docker push registry.gitlab.com/fevemania/shopee_side_project/$(SHOPEE_CRAWLER_ROUTINE_REPOPATH):$(SHOPEE_CRAWLER_ROUTINE_VERSION)
 
 ##########
 
@@ -110,4 +110,5 @@ build_write_s3_jsonfile_into_postgres_routine:
 		docker build -t registry.gitlab.com/fevemania/shopee_side_project/$(WRITE_S3_JSONFILE_INTO_POSTGRES_ROUTINE_REPOPATH):$(WRITE_S3_JSONFILE_INTO_POSTGRES_ROUTINE_VERSION) -f ./side_project/write_s3_jsonfile_into_postgres_routine/Dockerfile .
 
 .PHONY: push_write_s3_jsonfile_into_postgres_routine
+push_write_s3_jsonfile_into_postgres_routine:
 		docker push registry.gitlab.com/fevemania/shopee_side_project/$(WRITE_S3_JSONFILE_INTO_POSTGRES_ROUTINE_REPOPATH):$(WRITE_S3_JSONFILE_INTO_POSTGRES_ROUTINE_VERSION)
