@@ -126,7 +126,7 @@ services:
             - AWS_SECRET_ACCESS_KEY=9cb6nSF1aJKes3JiUPXZbOusvHn1yTRB0IZxPkOZ
             - AWS_DEFAULT_REGION=ap-northeast-1
         volumes:
-            - './write_s3_jsonfile_into_postgres_routine/log:/log'
+            - './write_s3_jsonfile_into_postgres_routine/log:/mnt/log'
 
 volumes:
     postgres:
