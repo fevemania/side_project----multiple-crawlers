@@ -1,8 +1,9 @@
-FROM python
-RUN pip install pika requests redis
-COPY conf/product_worker/product_worker.py product_worker.py
-COPY common/downloader.py downloader.py
-COPY common/rate_limiter.py rate_limiter.py
-COPY common/redis_cache.py redis_cache.py
-COPY common/wait-for-it.sh wait-for-it.sh
+M python
+COPY wait-for-it.sh wait-for-it.sh
 RUN chmod +x ./wait-for-it.sh
+COPY shopee_crawler/requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+COPY shopee_crawler/downloader.py downloader.py
+COPY shopee_crawler/rate_limiter.py rate_limiter.py
+COPY shopee_crawler/redis_cache.py redis_cache.py
+COPY shopee_crawler/product_worker.py product_worker.py
