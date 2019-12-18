@@ -68,4 +68,3 @@ service.add_resource(ProductListResource,
                      '/products/')
 service.add_resource(ProductResource,
                      '/products/<string:keyword>')
-
