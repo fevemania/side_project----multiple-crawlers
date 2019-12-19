@@ -34,5 +34,5 @@ spec:
           value: mypass
         - name: RABBITMQ_HOST
           value: rabbitmq
-        image: registry.gitlab.com/fevemania/shopee_side_project/shopee_crawler_routine:v0.0.1
+        image: registry.gitlab.com/fevemania/shopee_side_project/shopee_crawler_routine:vcheck
         name: shopee-crawler-routine

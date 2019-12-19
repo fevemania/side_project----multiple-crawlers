@@ -29,7 +29,7 @@ spec:
           value: admin
         - name: REDIS_HOST
           value: redis
-        image: registry.gitlab.com/fevemania/shopee_side_project/product_worker:v0.0.3
+        image: registry.gitlab.com/fevemania/shopee_side_project/product_worker:vcheck
         name: product-worker
       initContainers:
       - name: init-rabbitmq
