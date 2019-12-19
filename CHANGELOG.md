@@ -1,5 +1,20 @@
 # CHANGELOG for DevOps
 
+## 2019/12/19
+- Fix Bugs of crawler_routine
+- Add category_worker 'check' version image for debug
+- Add product_worker 'check' version image for debug
+## 2019/12/18
+- Merge code Commit 8e357259
+- Merge code Commit 03e7f349
+- Merge code Commit f1fe248d
+- Update all deployment and service file
+- Update Makefile
+- Convert Deployment category_crawler to Job
+
+## 2019/12/17
+- Merge code until Commit 7510966e
+
 ## 2019/12/13
 - Merge code until Commit 784431fd
 - Add gitlab-auth.yaml
