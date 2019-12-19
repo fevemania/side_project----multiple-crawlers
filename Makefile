@@ -18,7 +18,7 @@ CATEGORY_CRAWLER_VERSION_NUMBER ?= 0.0.2 #Remeber to modify version number by ea
 CATEGORY_CRAWLER_VERSION ?= v$(CATEGORY_CRAWLER_VERSION_NUMBER)
 CATEGORY_CRAWLER_REPOPATH := category_crawler
 
-SHOPEE_CRAWLER_ROUTINE_VERSION_NUMBER ?= check #Remeber to modify version number by each time you modify this part
+SHOPEE_CRAWLER_ROUTINE_VERSION_NUMBER ?= 0.0.2 #Remeber to modify version number by each time you modify this part
 SHOPEE_CRAWLER_ROUTINE_VERSION ?= v$(SHOPEE_CRAWLER_ROUTINE_VERSION_NUMBER)
 SHOPEE_CRAWLER_ROUTINE_REPOPATH := shopee_crawler_routine
 
