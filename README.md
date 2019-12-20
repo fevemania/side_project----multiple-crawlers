@@ -44,14 +44,8 @@ And wait for all containers are running, you can check by:
 kubectl get pods -o wide
 ```
 
-## Start crawler and Send categories
+## Start crawler
 
 ```
 kubectl apply -f deploy/job/category-crawler-job.yaml
-```
-
-Check for Job Compelete, and
-
-```
-kubectl apply -f deploy/job/send-categories-job.yaml
 ```
