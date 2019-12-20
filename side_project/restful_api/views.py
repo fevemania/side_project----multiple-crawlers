@@ -20,7 +20,7 @@ class ProductResource(Resource):
         result['keyword'] = keyword
         keyword = "%{}%".format(keyword)
         date_pattern = r"(\d{4}-\d{1,2}-\d{1,2})"
-        product = Product.query.filter(Product.data['item']['name'].astext.like(keyword))
+        product = Product.query.filter(Product.name.like(keyword))
         #app.logger.info(result)
         dumped_product = product_schema.dump(product, many=True)
 

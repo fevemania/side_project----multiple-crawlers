@@ -1,7 +1,7 @@
 version: '3'
 services:
     postgres:
-        image: postgres
+        image: groonga/pgroonga:latest
         restart: always
         environment:
             - POSTGRES_DB=db
@@ -106,7 +106,11 @@ services:
         depends_on:
             - postgres
         environment:
+            - POSTGRES_DB=db
+            - POSTGRES_USER=admin
+            - POSTGRES_PASSWORD=mypass
             - POSTGRES_HOST=postgres
+            - POSTGRES_PORT=5432
         command: ["./wait-for-it.sh", "-t", "30", "postgres:5432", "--", "/bin/bash", "flask_run.sh"]
         volumes:
             - './restful_api/migrations:/migrations'
