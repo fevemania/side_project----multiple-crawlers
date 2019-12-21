@@ -14,8 +14,6 @@ spec:
       labels:
         app: postgres
     spec:
-      imagePullSecrets:
-      - name: gitlab-auth
       containers:
       - env:
         - name: POSTGRES_DB
