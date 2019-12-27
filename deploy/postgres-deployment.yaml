@@ -22,7 +22,7 @@ spec:
           value: mypass
         - name: POSTGRES_USER
           value: admin
-        image: postgres
+        image: groonga/pgroonga:latest
         name: postgres
         ports:
         - containerPort: 5432

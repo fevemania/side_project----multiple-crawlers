@@ -49,8 +49,13 @@ if objects.get('Contents') is not None:
                 for row in f:
                     records = row.split('\t', 2)
                     json_data = records[2].strip().replace('\\u0000', '')
-                    data.append((records[0], Json(json.loads(json_data))))
-                sql = "INSERT INTO product (timestamp, data) VALUES (%s, %s)"
+                    try:
+                        json_data1 = json.loads(json_data)
+                        name = json_data1['item']['name']
+                        data.append((records[0], Json(json.loads(json_data)), name))
+                    except:
+                        pass  # json_data1 = {'item': None, 'version': 'xxxx', 'data': None, 'error_msg': None, 'error': -1}
+                sql = "INSERT INTO product (timestamp, data, name) VALUES (%s, %s, %s)"
                 cursor.executemany(sql, data)
                 connection.commit()
             os.remove(path)

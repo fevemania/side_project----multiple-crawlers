@@ -34,7 +34,7 @@ spec:
           value: 9cb6nSF1aJKes3JiUPXZbOusvHn1yTRB0IZxPkOZ
         - name: AWS_DEFAULT_REGION
           value: ap-northeast-1
-        image: registry.gitlab.com/fevemania/shopee_side_project/write_s3_jsonfile_into_postgres_routine:v0.0.1
+        image: registry.gitlab.com/fevemania/shopee_side_project/write_s3_jsonfile_into_postgres_routine:v0.0.2
         name: write-s3-jsonfile-into-postgres-routine
         volumeMounts:
         - mountPath: /mnt/log

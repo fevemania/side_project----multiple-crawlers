@@ -21,7 +21,15 @@ spec:
         env:
         - name: POSTGRES_HOST
           value: postgres
-        image: registry.gitlab.com/fevemania/shopee_side_project/shopee_restful_api_service:v0.0.1 
+        - name: POSTGRES_USER
+          value: admin
+        - name: POSTGRES_PASSWORD
+          value: mypass
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_DB
+          value: db
+        image: registry.gitlab.com/fevemania/shopee_side_project/shopee_restful_api_service:v0.0.2 
         name: shopee-restful-api-service
         ports:
         - containerPort: 5000

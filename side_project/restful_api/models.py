@@ -21,15 +21,21 @@ class Product(orm.Model, ResourceAddUpdateDelete):
     id = orm.Column(orm.Integer, primary_key=True)
     timestamp = orm.Column(orm.String(250), nullable=False)
     data = orm.Column(JSONB, nullable=False)
+    name = orm.Column(orm.Text(), nullable=False)
+    __table_args__ = (
+        orm.Index('pgroonga_name_index', name, postgresql_using='pgroonga'),
+    )
 
     def __init__(self, timestamp, data):
         self.timestamp = timestamp
         self.data = data
+        self.name = name
 
 class ProductSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
     timestamp = fields.String(required=True)
     data = fields.Raw()
+    name = fields.String(required=True)
     #url = ma.URLFor('service.productresource', id='<id>', _external=True)
 
 class Categories(orm.Model, ResourceAddUpdateDelete):
