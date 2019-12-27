@@ -29,7 +29,7 @@ spec:
           value: "5432"
         - name: POSTGRES_DB
           value: db
-        image: registry.gitlab.com/fevemania/shopee_side_project/shopee_restful_api_service:v0.0.2 
+        image: registry.gitlab.com/fevemania/shopee_side_project/shopee_restful_api_service:v0.0.3 
         name: shopee-restful-api-service
         ports:
         - containerPort: 5000
