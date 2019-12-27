@@ -3,7 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from models import orm
 from views import service_blueprint
-
+import os
+import socket
+import psycopg2
 
 def create_app(config_filename):
 

@@ -22,7 +22,7 @@ SHOPEE_CRAWLER_ROUTINE_VERSION_NUMBER ?= 0.0.2 #Remeber to modify version number
 SHOPEE_CRAWLER_ROUTINE_VERSION ?= v$(SHOPEE_CRAWLER_ROUTINE_VERSION_NUMBER)
 SHOPEE_CRAWLER_ROUTINE_REPOPATH := shopee_crawler_routine
 
-SHOPEE_RESTFUL_API_SERVICE_VERSION_NUMBER ?= 0.0.2 #Remeber to modify version number by each time you modify this part
+SHOPEE_RESTFUL_API_SERVICE_VERSION_NUMBER ?= 0.0.3 #Remeber to modify version number by each time you modify this part
 SHOPEE_RESTFUL_API_SERVICE_VERSION ?= v$(SHOPEE_RESTFUL_API_SERVICE_VERSION_NUMBER)
 SHOPEE_RESTFUL_API_SERVICE_REPOPATH := shopee_restful_api_service
 
