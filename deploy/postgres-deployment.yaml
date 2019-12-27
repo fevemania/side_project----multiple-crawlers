@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: postgres
   labels:
@@ -30,7 +30,12 @@ spec:
         - mountPath: /var/lib/postgresql/data
           name: postgres
       hostname: postgres
-      volumes:
-      - name: postgres
-        persistentVolumeClaim:
-          claimName: postgres
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-gp2
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: postgres-gp2
+      resources:
+        requests:
+          storage: 20Gi
