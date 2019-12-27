@@ -26,7 +26,7 @@ class Product(orm.Model, ResourceAddUpdateDelete):
         orm.Index('pgroonga_name_index', name, postgresql_using='pgroonga'),
     )
 
-    def __init__(self, timestamp, data):
+    def __init__(self, timestamp, data, name):
         self.timestamp = timestamp
         self.data = data
         self.name = name

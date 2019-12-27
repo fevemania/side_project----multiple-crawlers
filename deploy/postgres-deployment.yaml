@@ -29,14 +29,15 @@ spec:
         - containerPort: 5432
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
-          name: postgres
+          name: data
+          subPath: postgres
       hostname: postgres
   volumeClaimTemplates:
   - metadata:
-      name: postgres-gp2
+      name: data
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: postgres-gp2
+      storageClassName: mysql-gp2
       resources:
         requests:
           storage: 20Gi
