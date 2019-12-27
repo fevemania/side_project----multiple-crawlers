@@ -1,5 +1,8 @@
 # CHANGELOG for DevOps
 
+## 2019/12/27
+- Merge code Commit 90ec2fd1
+
 ## 2019/12/19
 - Fix Bugs of crawler_routine
 - Add category_worker 'check' version image for debug

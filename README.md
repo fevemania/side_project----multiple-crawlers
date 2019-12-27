@@ -54,11 +54,11 @@ kubectl apply -f deploy/job/category-crawler-job.yaml
 
 ##正式版本 image 對應為:
 
-- product_worker:v0.0.3
-- category_worker:v0.0.3
-- write_s3_jsonfile_into_postgres_routine:v0.0.1
+- product_worker:v0.0.3 (建議先使用vcheck)
+- category_worker:v0.0.3 (建議先使用vcheck)
+- write_s3_jsonfile_into_postgres_routine:v0.0.2
 - shopee_crawler_routine:v0.0.2 (每天晚上六點)
-- shopee_restful_api_service:v0.0.1
+- shopee_restful_api_service:v0.0.2
 - category_crawler:v0.0.2
 - fluentd:v0.0.4 (寫入 Ching-Yi Hung 的 s3)
 
@@ -66,8 +66,8 @@ kubectl apply -f deploy/job/category-crawler-job.yaml
 
 - product_worker:vcheck (尚在除錯用, 會不定時重新建立)
 - category_worker:vcheck (尚在除錯用, 會不定時重新建立)
-- write_s3_jsonfile_into_postgres_routine:v0.0.1
+- write_s3_jsonfile_into_postgres_routine:v0.0.2
 - shopee_crawler_routine:vcheck (每天中午12點)
-- shopee_restful_api_service:v0.0.1
+- shopee_restful_api_service:v0.0.2
 - category_crawler:v0.0.2
 - fluentd:v0.0.3 (寫入 ashspencil 的 s3)
