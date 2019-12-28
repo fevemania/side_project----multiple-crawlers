@@ -32,6 +32,12 @@ to create, after creating, you can check by:
 kubectl get secrets
 ```
 
+## Prepare StorageClass For EBS
+
+```
+kubectl apply -f deploy/storageclass/postgres-gp2-class.yaml
+```
+
 ## Prepare Infrastructure
 
 ```
