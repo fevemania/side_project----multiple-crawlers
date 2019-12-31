@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from flask import Flask 
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate 
@@ -8,6 +9,18 @@ import socket
 import psycopg2
  
 def create_app(config_filename): 
+=======
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from models import orm
+from views import service_blueprint
+import os
+import socket
+import psycopg2
+
+def create_app(config_filename):
+>>>>>>> dev_devops_test
 
     POSTGRES_DB = os.environ.get('POSTGRES_DB')
     POSTGRES_USER = os.environ.get('POSTGRES_USER')
@@ -22,6 +35,7 @@ def create_app(config_filename):
     cursor.close()
     connection.close()
 
+<<<<<<< HEAD
     app = Flask(__name__) 
     app.config.from_object(config_filename) 
     orm.init_app(app) 
@@ -31,3 +45,14 @@ def create_app(config_filename):
  
  
 app = create_app('config') 
+=======
+    app = Flask(__name__)
+    app.config.from_object(config_filename)
+    orm.init_app(app)
+    app.register_blueprint(service_blueprint, url_prefix='/service')
+    migrate = Migrate(app, orm)
+    return app
+
+
+app = create_app('config')
+>>>>>>> dev_devops_test

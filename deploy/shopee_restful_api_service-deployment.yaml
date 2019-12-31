@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopee-restful-api-service
+  labels:
+    app: shopee-restful-api-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shopee-restful-api-service
+  template:
+    metadata:
+      labels:
+        app: shopee-restful-api-service
+    spec:
+      imagePullSecrets:
+      - name: gitlab-auth
+      containers:
+      - command: ["./wait-for-it.sh", "-t", "30", "postgres:5432", "--", "/bin/bash", "flask_run.sh"]
+        env:
+        - name: POSTGRES_HOST
+          value: postgres
+        - name: POSTGRES_USER
+          value: admin
+        - name: POSTGRES_PASSWORD
+          value: mypass
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_DB
+          value: db
+        image: registry.gitlab.com/fevemania/shopee_side_project/shopee_restful_api_service:v0.0.3 
+        name: shopee-restful-api-service
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - mountPath: /migrations
+          name: shopee-restful-api-service
+      hostname: shopee-restful-api-service
+      initContainers:
+      - name: init-postgres
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nslookup postgres; do echo waiting for postgres; sleep 2; done;']
+      volumes:
+      - name: shopee-restful-api-service
+        persistentVolumeClaim:
+          claimName: shopee-restful-api-service

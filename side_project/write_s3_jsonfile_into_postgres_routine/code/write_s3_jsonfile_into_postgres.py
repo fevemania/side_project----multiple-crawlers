@@ -7,7 +7,10 @@ import boto3
 import pytz
 import dateutil.parser
 from datetime import datetime
+<<<<<<< HEAD
 import json
+=======
+>>>>>>> dev_devops_test
 
 timestamp_filename = 'log/last_time_of_s3_jsonfile_to_postgres.txt'
 if not os.path.exists(os.path.dirname(timestamp_filename)):
@@ -55,7 +58,11 @@ if objects.get('Contents') is not None:
                         name = json_data1['item']['name']
                         data.append((records[0], Json(json.loads(json_data)), name))
                     except:
+<<<<<<< HEAD
                         pass  # json_data1 = {'item': None, 'version': 'xxxx', 'data': None, 'error_msg': None, 'error': -1} 
+=======
+                        pass  # json_data1 = {'item': None, 'version': 'xxxx', 'data': None, 'error_msg': None, 'error': -1}
+>>>>>>> dev_devops_test
                 sql = "INSERT INTO product (timestamp, data, name) VALUES (%s, %s, %s)"
                 cursor.executemany(sql, data)
                 connection.commit()
@@ -64,7 +71,11 @@ if objects.get('Contents') is not None:
 
     if newest_modified != last_modified:
         with open(timestamp_filename, 'w') as f:
+<<<<<<< HEAD
             f.write(str(newest_modified))    
+=======
+            f.write(str(newest_modified))
+>>>>>>> dev_devops_test
 
 cursor.close()
 connection.close()

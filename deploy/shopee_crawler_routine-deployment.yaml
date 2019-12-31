@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopee-crawler-routine 
+  labels:
+    app: shopee-crawler-routine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shopee-crawler-routine
+  template:
+    metadata:
+      labels:
+        app: shopee-crawler-routine
+    spec:
+      imagePullSecrets:
+      - name: gitlab-auth
+      containers:
+      - env:
+        - name: POSTGRES_DB
+          value: db
+        - name: POSTGRES_PASSWORD
+          value: mypass
+        - name: POSTGRES_USER
+          value: admin
+        - name: POSTGRES_HOST
+          value: postgres
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: RABBITMQ_USER
+          value: admin
+        - name: RABBITMQ_PASSWORD
+          value: mypass
+        - name: RABBITMQ_HOST
+          value: rabbitmq
+        image: registry.gitlab.com/fevemania/shopee_side_project/shopee_crawler_routine:v0.0.2
+        name: shopee-crawler-routine

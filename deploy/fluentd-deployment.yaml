@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluentd
+  labels:
+    app: fluentd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fluentd
+  template:
+    metadata:
+      labels:
+        app: fluentd
+    spec:
+      imagePullSecrets:
+      - name: gitlab-auth
+      containers:
+      - image: registry.gitlab.com/fevemania/shopee_side_project/fluentd:v0.0.4
+        name: fluentd
+        volumeMounts:
+        - mountPath: /fluentd/log
+          name: fluentd 
+        ports:
+        - containerPort: 9880
+      hostname: fluentd
+      volumes:
+      - name: fluentd
+        persistentVolumeClaim:
+          claimName: fluentd

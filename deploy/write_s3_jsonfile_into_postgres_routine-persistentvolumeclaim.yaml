@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: write-s3-jsonfile-into-postgres-routine
+  labels:
+    type: local
+spec:
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: write-s3-jsonfile-into-postgres-routine-data
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/write_s3_jsonfile_into_postgres_routine"
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: write-s3-jsonfile-into-postgres-routine
+  labels:
+    app: write-s3-jsonfile-into-postgres-routine
+spec:
+  storageClassName: write-s3-jsonfile-into-postgres-routine-data
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi

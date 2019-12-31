@@ -30,9 +30,9 @@ class CategoryWorker:
                     self.product_queue = self.product_queue = self.ch2.queue_declare(queue='products', durable=True, passive=True)
 
                 html = self.downloader(self.category_url.format(row[0], self.n_items, self.offset))
-              # html = self.downloader(self.category_url.format(row['category_id'], self.n_items, self.offset))
+                #html = self.downloader(self.category_url.format(row['category_id'], self.n_items, self.offset))
 
-                if html is None: 
+                if html is None:
                     print("Unexpected Error")
                     sys.exit(5)
                     break
@@ -56,10 +56,10 @@ class CategoryWorker:
                             delivery_mode=2,
                         ))
                 self.offset += self.n_items
-            except Exception as e: 
+            except Exception as e:
                 print(e)
                 print('category callback exception')
-        print('good') 
+        print('good')
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def run(self):
@@ -90,4 +90,3 @@ if __name__ == '__main__':
     downloader = Downloader(rate_limiter, cache=redis_cache)
     category_worker = CategoryWorker(downloader)
     category_worker.run()
-    

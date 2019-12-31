@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-worker
+  labels:
+    app: product-worker
+spec:
+  replicas: 8
+  selector:
+    matchLabels:
+      app: product-worker
+  template:
+    metadata:
+      labels:
+        app: product-worker
+    spec:
+      imagePullSecrets:
+      - name: gitlab-auth
+      containers:
+      - command: ["./wait-for-it.sh", "-t", "30", "rabbitmq:5672", "--", "python", "-u", "product_worker.py"]
+        env:
+        - name: FLUENTD_HOST
+          value: fluentd
+        - name: RABBIT_HOST
+          value: rabbitmq
+        - name: RABBITMQ_PASSWORD
+          value: mypass
+        - name: RABBITMQ_USER
+          value: admin
+        - name: REDIS_HOST
+          value: redis
+        image: registry.gitlab.com/fevemania/shopee_side_project/product_worker:vcheck
+        name: product-worker
+      initContainers:
+      - name: init-rabbitmq
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nslookup rabbitmq; do echo waiting for rabbitmq; sleep 2; done;']
+      - name: init-fluentd
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nslookup fluentd; do echo waiting for fluentd; sleep 2; done;']

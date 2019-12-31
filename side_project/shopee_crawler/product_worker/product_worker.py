@@ -60,7 +60,7 @@ if __name__ == '__main__':
                 queue='products', on_message_callback=product_crawler.callback)
         ch.start_consuming()
     except:
-        connection = None 
+        connection = None
     finally:
         if connection is not None:
             connection.close()

@@ -12,4 +12,68 @@ running step:
 
 6. open another tmux terminal, and run `python send_categories.py` to sent all categories into rabbitmq, and trigger the crawler.
 
+# ----- For Kubernetes Production -----
 
+## Prepare your authorization for pull image
+
+```
+cat ~/.docker/config.json | base64 -w0
+```
+
+There will be base64 code, copy that and into and replace Form <your-bas364-code> in gitlab.yaml and save it. type
+
+```
+kubectl create -f gitlab-yaml
+```
+
+to create, after creating, you can check by:
+
+```
+kubectl get secrets
+```
+
+## Prepare StorageClass For EBS
+
+```
+kubectl apply -f deploy/storageclass/postgres-gp2-class.yaml
+```
+
+## Prepare Infrastructure
+
+```
+kubectl apply -f deploy/
+```
+
+And wait for all containers are running, you can check by:
+
+```
+kubectl get pods -o wide
+```
+
+## Start crawler
+
+```
+kubectl apply -f deploy/job/category-crawler-job.yaml
+```
+
+# NOTE:
+
+##正式版本 image 對應為:
+
+- product_worker:v0.0.3 (建議先使用vcheck)
+- category_worker:v0.0.3 (建議先使用vcheck)
+- write_s3_jsonfile_into_postgres_routine:v0.0.2
+- shopee_crawler_routine:v0.0.2 (每天晚上六點)
+- shopee_restful_api_service:v0.0.3
+- category_crawler:v0.0.2
+- fluentd:v0.0.4 (寫入 Ching-Yi Hung 的 s3)
+
+##目前測試用 image 對應為:
+
+- product_worker:vcheck (尚在除錯用, 會不定時重新建立)
+- category_worker:vcheck (尚在除錯用, 會不定時重新建立)
+- write_s3_jsonfile_into_postgres_routine:v0.0.2
+- shopee_crawler_routine:vcheck (每天中午12點)
+- shopee_restful_api_service:v0.0.3
+- category_crawler:v0.0.2
+- fluentd:v0.0.3 (寫入 ashspencil 的 s3)

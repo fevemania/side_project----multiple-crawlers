@@ -13,6 +13,7 @@ POSTGRES_ADDRESS = socket.gethostbyname(os.environ.get('POSTGRES_HOST'))
 
 conn = psycopg2.connect(database=POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD, host=POSTGRES_ADDRESS, port=POSTGRES_PORT)
 #conn = psycopg2.connect(database='db', user='admin', password='mypass', host='localhost', port='5432')
+
 cur = conn.cursor()
 headers = {'User-Agent': 'Googlebot',}
 

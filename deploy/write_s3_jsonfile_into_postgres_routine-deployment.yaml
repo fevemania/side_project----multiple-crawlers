@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: write-s3-jsonfile-into-postgres-routine
+  labels:
+    app: write-s3-jsonfile-into-postgres-routine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: write-s3-jsonfile-into-postgres-routine
+  template:
+    metadata:
+      labels:
+        app: write-s3-jsonfile-into-postgres-routine
+    spec:
+      imagePullSecrets:
+      - name: gitlab-auth
+      containers:
+      - env:
+        - name: POSTGRES_DB
+          value: db
+        - name: POSTGRES_PASSWORD
+          value: mypass
+        - name: POSTGRES_USER
+          value: admin
+        - name: POSTGRES_HOST
+          value: postgres
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: AWS_ACCESS_KEY_ID
+          value: AKIAQAAF44YNYGLTMCGF
+        - name: AWS_SECRET_ACCESS_KEY
+          value: 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
+        - name: AWS_DEFAULT_REGION
+          value: ap-northeast-1
+        image: registry.gitlab.com/fevemania/shopee_side_project/write_s3_jsonfile_into_postgres_routine:v0.0.2
+        name: write-s3-jsonfile-into-postgres-routine
+        volumeMounts:
+        - mountPath: /mnt/log
+          name: write-s3-jsonfile-into-postgres-routine
+      volumes:
+      - name: write-s3-jsonfile-into-postgres-routine
+        persistentVolumeClaim:
+          claimName: write-s3-jsonfile-into-postgres-routine

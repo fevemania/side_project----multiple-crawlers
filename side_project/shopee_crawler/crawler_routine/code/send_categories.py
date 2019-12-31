@@ -12,7 +12,11 @@ POSTGRES_USER = os.environ.get('POSTGRES_USER')
 POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD')
 POSTGRES_PORT = os.environ.get('POSTGRES_PORT')
 POSTGRES_ADDRESS = socket.gethostbyname(os.environ.get('POSTGRES_HOST'))
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> dev_devops_test
 RABBITMQ_USER = os.environ.get('RABBITMQ_USER')
 RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD')
 RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST')
@@ -32,11 +36,19 @@ def send_categories():
     print("send")
     for row in result:
         channel.basic_publish(
+<<<<<<< HEAD
             exchange='', 
             routing_key='categories', 
             body=json.dumps(row),
             properties=pika.BasicProperties(
                 delivery_mode=2,  
+=======
+            exchange='',
+            routing_key='categories',
+            body=json.dumps(row),
+            properties=pika.BasicProperties(
+                delivery_mode=2,
+>>>>>>> dev_devops_test
             ))
     connection.close()
 
@@ -46,3 +58,7 @@ if __name__ == '__main__':
     finally:
         cur.close()
         conn.close()
+<<<<<<< HEAD
+=======
+
+>>>>>>> dev_devops_test

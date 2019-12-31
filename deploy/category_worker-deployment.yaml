@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: category-worker
+  labels:
+    app: category-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: category-worker
+  template:
+    metadata:
+      labels:
+        app: category-worker
+    spec:
+      imagePullSecrets:
+      - name: gitlab-auth
+      containers:
+      - command: ["./wait-for-it.sh", "-t", "30", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
+        env:
+        - name: RABBIT_HOST
+          value: rabbitmq
+        - name: RABBITMQ_PASSWORD
+          value: mypass
+        - name: RABBITMQ_USER
+          value: admin
+        - name: REDIS_HOST
+          value: redis
+        image: registry.gitlab.com/fevemania/shopee_side_project/category_worker:vcheck
+        name: category-worker
+      initContainers:
+      - name: init-rabbitmq
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nslookup rabbitmq; do echo waiting for rabbitmq; sleep 2; done;']
