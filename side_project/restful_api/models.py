@@ -42,11 +42,7 @@ class Categories(orm.Model, ResourceAddUpdateDelete):
     id = orm.Column(orm.Integer, primary_key=True)
     category_id = orm.Column(orm.Integer, unique=True, nullable=False)
     category_name = orm.Column(orm.String(50), nullable=False)
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> dev_devops_test
     def __init__(self, category_id, category_name):
         self.category_id = category_id
         self.category_name = category_name

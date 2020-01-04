@@ -36,7 +36,9 @@ services:
             - redis:/data
     
     fluentd:
-        build: ./shopee_crawler/fluentd
+        build:
+            context: . 
+            dockerfile: ./side_project/shopee_crawler/fluentd/Dockerfile
         ports:
             - 9880:9880
           #      - 24224:24224/udp
@@ -46,7 +48,7 @@ services:
     category_crawler:
         build:
             context: .
-            dockerfile: ./shopee_crawler/category_crawler/Dockerfile
+            dockerfile: ./side_project/shopee_crawler/category_crawler/Dockerfile
         depends_on:
             - postgres
         environment:
@@ -60,7 +62,7 @@ services:
     shopee_crawler_routine:
         build:
             context: .
-            dockerfile: ./shopee_crawler/crawler_routine/Dockerfile
+            dockerfile: ./side_project/shopee_crawler/crawler_routine/Dockerfile
         environment:
             - POSTGRES_DB=db
             - POSTGRES_USER=admin
@@ -74,7 +76,7 @@ services:
     category_worker:
         build:
             context: .
-            dockerfile: ./shopee_crawler/category_worker/Dockerfile
+            dockerfile: ./side_project/shopee_crawler/category_worker/Dockerfile
         depends_on:
             - rabbitmq
         environment:
@@ -87,7 +89,7 @@ services:
     product_worker:
         build:
             context: .
-            dockerfile: ./shopee_crawler/product_worker/Dockerfile
+            dockerfile: ./side_project/shopee_crawler/product_worker/Dockerfile
         depends_on:
             - rabbitmq
             - fluentd
@@ -102,7 +104,7 @@ services:
     shopee_restful_api_service:
         build:
             context: .
-            dockerfile: ./restful_api/Dockerfile
+            dockerfile: ./side_project/restful_api/Dockerfile
         depends_on:
             - postgres
         environment:
@@ -113,7 +115,7 @@ services:
             - POSTGRES_PORT=5432
         command: ["./wait-for-it.sh", "-t", "30", "postgres:5432", "--", "/bin/bash", "flask_run.sh"]
         volumes:
-            - './restful_api/migrations:/migrations'
+            - './side_project/restful_api/migrations:/migrations'
         ports:
             - 5000:5000
     
@@ -121,7 +123,7 @@ services:
     write_s3_jsonfile_into_postgres_routine:
         build:
             context: .
-            dockerfile: ./write_s3_jsonfile_into_postgres_routine/Dockerfile
+            dockerfile: ./side_project/write_s3_jsonfile_into_postgres_routine/Dockerfile
         environment:
             - POSTGRES_DB=db
             - POSTGRES_USER=admin
@@ -132,7 +134,7 @@ services:
             - AWS_SECRET_ACCESS_KEY=9cb6nSF1aJKes3JiUPXZbOusvHn1yTRB0IZxPkOZ
             - AWS_DEFAULT_REGION=ap-northeast-1
         volumes:
-            - './write_s3_jsonfile_into_postgres_routine/log:/mnt/log'
+            - './side_project/write_s3_jsonfile_into_postgres_routine/log:/mnt/log'
 
 volumes:
     postgres:

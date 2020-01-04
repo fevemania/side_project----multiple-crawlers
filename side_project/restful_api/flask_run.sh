@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 #!/bin/bash
-=======
-#!/bin/sh
->>>>>>> dev_devops_test
 flask db init
 flask db migrate
 flask db upgrade
