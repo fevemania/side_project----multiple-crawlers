@@ -34,6 +34,14 @@ POSTGRES_ADDRESS = socket.gethostbyname(os.environ.get('POSTGRES_HOST'))
 connection = psycopg2.connect(database=POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD, host=POSTGRES_ADDRESS, port=POSTGRES_PORT)
 cursor = connection.cursor()
 
+# select exist date from Date
+distinct_date_set = list()
+existed_date_set = set()
+cursor.execute('select date from date')
+result = cursor.fetchall()
+for row in result:
+    existed_date_set.add(row[0])
+
 if objects.get('Contents') is not None:
     dirname = objects['Contents'][0]['Key'].split('/')[0]
     if not os.path.isdir(dirname):
@@ -48,19 +56,29 @@ if objects.get('Contents') is not None:
             with open(path, 'r') as f:
                 for row in f:
                     records = row.split('\t', 2)
+                    now_utc = dateutil.parser.parse(records[0])
+                    date = now_utc.date()
+                    if date not in existed_date_set:
+                        distinct_date_set.append(date)
+
                     json_data = records[2].strip().replace('\\u0000', '')
                     try:
                         json_data1 = json.loads(json_data)
                         name = json_data1['item']['name']
-                        data.append((records[0], Json(json.loads(json_data)), name))
+                        data.append((Json(json.loads(json_data)), name, now_utc.date()))
                     except:
                         pass  # json_data1 = {'item': None, 'version': 'xxxx', 'data': None, 'error_msg': None, 'error': -1}
-                sql = "INSERT INTO product (timestamp, data, name) VALUES (%s, %s, %s)"
+                sql = "INSERT INTO product (data, name, date) VALUES (%s, %s, %s)"
                 cursor.executemany(sql, data)
                 connection.commit()
+                if distinct_date_set:
+                    sql = "INSERT INTO date (date) VALUES (%s)"
+                    cursor.executemany(tuple(distinct_date_set))
+                    connection.commit()
+
             os.remove(path)
             print('finish store {} into postgres'.format(path))
-
+        break
     if newest_modified != last_modified:
         with open(timestamp_filename, 'w') as f:
             f.write(str(newest_modified))

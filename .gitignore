@@ -32,3 +32,5 @@ last_time_of_s3_jsonfile_to_postgres.txt
 .vimrc
 .virtualenvs/
 .wget-hsts
+qmigrations
+migrations_ori

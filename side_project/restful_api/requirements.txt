@@ -1,9 +1,6 @@
 Flask
 flask-restful
 httpie
-Flask-SQLAlchemy
-Flask-Migrate
-marshmallow
-marshmallow-sqlalchemy
-flask-marshmallow
+SQLAlchemy
 psycopg2
+alembic
