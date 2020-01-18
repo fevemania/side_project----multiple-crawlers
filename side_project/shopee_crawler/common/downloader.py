@@ -39,10 +39,10 @@ class Downloader:
                     html = None
                     if self.num_retries and 500 <= resp.status_code < 600:
                         self.num_retries -= 1
+                        time.sleep(5)
                         return self.download(url, headers, proxies)
             except requests.exceptions.RequestException as e:
                 print('Download error:', e)
-                print('wait')
-                time.sleep(30)
-                return {'html': None, 'code': 500}
+                time.sleep(5)
+                continue
             return {'html': html, 'code': resp.status_code}
