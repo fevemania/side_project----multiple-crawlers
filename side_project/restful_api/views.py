@@ -12,24 +12,22 @@ product_schema = ProductSchema()
 def session_scope():
     session = Session()
     try:
-        app.logger.info("success")
         yield session
         session.commit()
     except:
-        app.logger.info("except")
         session.rollback()
         raise
     finally:
-        app.logger.info("remove session")
-        session.remove()
+        Session.remove()
 
 class ProductResource(Resource):
     def get(self, keyword):
         result = OrderedDict()
         result['keyword'] = keyword
         keyword = "%{}%".format(keyword)
-        product = Product.query.filter(Product.name.like(keyword))
-        dumped_product = product_schema.dump(product, many=True)
+        with session_scope() as session:
+            product = session.query(Product).filter(Product.name.like(keyword))
+            dumped_product = product_schema.dump(product, many=True)
         #app.logger.info(result)
         for product in dumped_product:
             date = product['date']
@@ -54,8 +52,6 @@ class ProductResource(Resource):
                 result[date]['total_daily_sold_given_keyword'] += historical_sold
                 result[date]['total_daily_avg_price_min_given_keyword'] = \
                     result[date]['total_daily_avg_price_min_given_keyword'] * ((product_cnt-1)/product_cnt) + historical_price_min / product_cnt
-                app.logger.info(date)
-                app.logger.info(product_cnt)
                 result[date]['total_daily_avg_price_max_given_keyword'] = \
                     result[date]['total_daily_avg_price_max_given_keyword'] * ((product_cnt-1)/product_cnt) + historical_price_max / product_cnt
                 result[date][itemid] = {'name': name, 'historical_sold': historical_sold, 'historical_price_min': historical_price_min, 'historical_price_max': historical_price_max, 'seller_id': sellerid}
@@ -64,6 +60,7 @@ class ProductResource(Resource):
 
 class ProductListResource(Resource):
     def get(self):
-        products = Product.query.all()
-        dump_result = product_schema.dump(products, many=True)
+        with session_scope() as session:
+            products = session.query(Product).all()
+            dump_result = product_schema.dump(products, many=True)
         return dump_result

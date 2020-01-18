@@ -5,8 +5,6 @@ from sqlalchemy.dialects.postgresql import JSONB
 from marshmallow import Schema, fields
 
 class Product(object):
-    query = Session.query_property()
-
     def __init__(self, date, name, data):
         self.date = date
         self.name = name
@@ -25,7 +23,6 @@ class ProductSchema(Schema):
     data = fields.Raw()
 
 class Category(object):
-    query = Session.query_property()
     def __init__(self, id, name):
         self.id = id
         self.name = name
