@@ -7,6 +7,7 @@ import boto3
 import pytz
 import dateutil.parser
 from datetime import datetime
+from datetime import timedelta
 
 timestamp_filename = 'log/last_time_of_s3_jsonfile_to_postgres.txt'
 if not os.path.exists(os.path.dirname(timestamp_filename)):
@@ -15,12 +16,13 @@ if not os.path.exists(os.path.dirname(timestamp_filename)):
 if not os.path.isfile(timestamp_filename):
     #now_utc = pytz.utc.localize(datetime.utcnow())
     now_utc = pytz.utc.localize(dateutil.parser.parse('2019-01-01T00:00:00'))
-    newest_modified = last_modified = now_utc.replace(microsecond=0)
+    #newest_modified = last_modified = now_utc.replace(microsecond=0)
+    newest_modified = last_modified = now_utc.date()
     with open(timestamp_filename, 'w') as f:
         f.write(str(last_modified))
 else:
     with open(timestamp_filename, 'r') as f:
-        newest_modified = last_modified = dateutil.parser.parse(f.read())
+        newest_modified = last_modified = dateutil.parser.parse(f.read()).date()
 
 s3 = boto3.resource('s3')
 objects = s3.meta.client.list_objects_v2(Bucket='dataforcrawl')
@@ -35,9 +37,8 @@ connection = psycopg2.connect(database=POSTGRES_DB, user=POSTGRES_USER, password
 cursor = connection.cursor()
 
 # select exist date from Date
-distinct_date_set = list()
 existed_date_set = set()
-cursor.execute('select date from date')
+cursor.execute('select date from dates')
 result = cursor.fetchall()
 for row in result:
     existed_date_set.add(row[0])
@@ -48,10 +49,11 @@ if objects.get('Contents') is not None:
         os.mkdir(dirname)
     for obj in objects['Contents']:
         path = obj['Key']
-        if obj['LastModified'] > last_modified and path.endswith('.json'):
-            if obj['LastModified'] > newest_modified:
-                newest_modified = obj['LastModified']
+        if obj['LastModified'].date() > last_modified and path.endswith('.json'):
+            if obj['LastModified'].date() > newest_modified:
+                newest_modified = obj['LastModified'].date()
             data = []
+            distinct_date_list = []
             s3.meta.client.download_file('dataforcrawl', path, path)
             with open(path, 'r') as f:
                 for row in f:
@@ -59,7 +61,8 @@ if objects.get('Contents') is not None:
                     now_utc = dateutil.parser.parse(records[0])
                     date = now_utc.date()
                     if date not in existed_date_set:
-                        distinct_date_set.append(date)
+                        distinct_date_list.append((date,))
+                        existed_date_set.add(date)
 
                     json_data = records[2].strip().replace('\\u0000', '')
                     try:
@@ -68,17 +71,24 @@ if objects.get('Contents') is not None:
                         data.append((Json(json.loads(json_data)), name, now_utc.date()))
                     except:
                         pass  # json_data1 = {'item': None, 'version': 'xxxx', 'data': None, 'error_msg': None, 'error': -1}
+                
+                if distinct_date_list:
+                    for new_date_tuple in distinct_date_list:
+                        new_date = new_date_tuple[0]
+                        tablename = 'product_{}'.format(new_date)
+                        cursor.execute("CREATE TABLE \"{}\" PARTITION OF product FOR VALUES FROM ('{}') TO ('{}')".format(
+                            tablename, new_date, new_date + timedelta(days=1)))
+                        connection.commit()
+                    cursor.executemany("INSERT INTO dates (date) VALUES (%s)", distinct_date_list)
+                    connection.commit()
+
                 sql = "INSERT INTO product (data, name, date) VALUES (%s, %s, %s)"
                 cursor.executemany(sql, data)
                 connection.commit()
-                if distinct_date_set:
-                    sql = "INSERT INTO date (date) VALUES (%s)"
-                    cursor.executemany(tuple(distinct_date_set))
-                    connection.commit()
 
             os.remove(path)
             print('finish store {} into postgres'.format(path))
-        break
+
     if newest_modified != last_modified:
         with open(timestamp_filename, 'w') as f:
             f.write(str(newest_modified))

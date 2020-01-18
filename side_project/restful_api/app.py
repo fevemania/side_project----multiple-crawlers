@@ -1,37 +1,20 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from models import orm
-from views import service_blueprint
+from flask import Flask, Blueprint
+from flask_restful import Api
+from views import ProductResource, ProductListResource
 import os
 import socket
 import psycopg2
-from database import db_session
 
-def create_app(config_filename):
-#   session = db_session()
-#   session.execute('CREATE EXTENSION if not EXISTS pgroonga')
-#   session.commit()
-#   session.remove()
-    POSTGRES_DB = os.environ.get('POSTGRES_DB')
-    POSTGRES_USER = os.environ.get('POSTGRES_USER')
-    POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD')
-    POSTGRES_PORT = os.environ.get('POSTGRES_PORT')
-    POSTGRES_ADDRESS = socket.gethostbyname(os.environ.get('POSTGRES_HOST'))
-    
-    connection = psycopg2.connect(database=POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD, host=POSTGRES_ADDRESS, port=POSTGRES_PORT)
-    cursor = connection.cursor()
-    cursor.execute('CREATE EXTENSION if not EXISTS pgroonga')
-    connection.commit()
-    cursor.close()
-    connection.close()
- 
+def create_app():
     app = Flask(__name__)
-    #app.config.from_object(config_filename)
-    #orm.init_app(app)
-    #app.register_blueprint(service_blueprint, url_prefix='/service')
-    #migrate = Migrate(app, orm)
+    service_blueprint = Blueprint('service', __name__)
+    # link Api to Blueprint
+    service = Api(service_blueprint)
+    service.add_resource(ProductListResource, '/products/')
+    service.add_resource(ProductResource, '/products/<string:keyword>')
+    app.register_blueprint(service_blueprint, url_prefix='/service')
+
     return app
 
 
-app = create_app('config')
+app = create_app()

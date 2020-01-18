@@ -1,15 +1,27 @@
-from flask import Blueprint
-from flask_restful import Api, Resource
-from models import orm, Product, ProductSchema
+from flask_restful import Resource
+from models import Product, ProductSchema
 from flask import current_app as app
-import re
 from collections import OrderedDict
+from database import Session
+from contextlib import contextmanager
 
-service_blueprint = Blueprint('service', __name__)
 # validate, serialize, and deserialize products.
 product_schema = ProductSchema()
-# link Api to Blueprint
-service = Api(service_blueprint)
+
+@contextmanager
+def session_scope():
+    session = Session()
+    try:
+        app.logger.info("success")
+        yield session
+        session.commit()
+    except:
+        app.logger.info("except")
+        session.rollback()
+        raise
+    finally:
+        app.logger.info("remove session")
+        session.remove()
 
 class ProductResource(Resource):
     def get(self, keyword):
@@ -17,9 +29,8 @@ class ProductResource(Resource):
         result['keyword'] = keyword
         keyword = "%{}%".format(keyword)
         product = Product.query.filter(Product.name.like(keyword))
-        #app.logger.info(result)
         dumped_product = product_schema.dump(product, many=True)
-
+        #app.logger.info(result)
         for product in dumped_product:
             date = product['date']
             product = product['data']['item']
@@ -56,8 +67,3 @@ class ProductListResource(Resource):
         products = Product.query.all()
         dump_result = product_schema.dump(products, many=True)
         return dump_result
-
-service.add_resource(ProductListResource,
-    '/products/')
-service.add_resource(ProductResource,
-        '/products/<string:keyword>')

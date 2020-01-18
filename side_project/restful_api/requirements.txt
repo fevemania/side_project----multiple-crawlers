@@ -4,3 +4,4 @@ httpie
 SQLAlchemy
 psycopg2
 alembic
+marshmallow

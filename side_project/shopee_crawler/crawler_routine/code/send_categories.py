@@ -21,7 +21,7 @@ cur = conn.cursor()
 headers = {'User-Agent': 'Googlebot',}
 
 def send_categories():
-    cur.execute('SELECT category_id, category_name FROM categories')
+    cur.execute('SELECT id, name FROM category')
     result = cur.fetchall()
     credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASSWORD)
     connection = pika.BlockingConnection(

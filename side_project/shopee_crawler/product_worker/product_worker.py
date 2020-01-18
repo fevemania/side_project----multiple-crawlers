@@ -21,15 +21,9 @@ class ProductCrawler:
     def callback(self, ch, method, properties, body):
         record = json.loads(body)
         html = self.downloader(self.product_url.format(record['itemid'], record['shopid']))
-        #product = {}
-        #product['product_id'] = record['itemid']
-        #product['product_name'] = record['name']
-        #product['category_id'] = record['category_id']
         try:
             if html is not None:
                 api_data = json.loads(html)
-                #product['price_min'] = api_data['item']['price_min'] / 100000
-                #product['price_max'] = api_data['item']['price_max'] / 100000
                 requests.get(self.fluentd_url, json=api_data)
             else:
                 print('Oh no')

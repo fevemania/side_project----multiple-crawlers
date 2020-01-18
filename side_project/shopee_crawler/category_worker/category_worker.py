@@ -30,7 +30,6 @@ class CategoryWorker:
                     self.product_queue = self.product_queue = self.ch2.queue_declare(queue='products', durable=True, passive=True)
 
                 html = self.downloader(self.category_url.format(row[0], self.n_items, self.offset))
-                #html = self.downloader(self.category_url.format(row['category_id'], self.n_items, self.offset))
 
                 if html is None:
                     print("Unexpected Error")
@@ -44,10 +43,8 @@ class CategoryWorker:
                 product = {}
                 for i in range(len(api_data['items'])):
                     item = api_data['items'][i]
-#                   product['category_id'] = row['category_id']
                     product['itemid'] = item['itemid']
                     product['shopid'] = item['shopid']
-#                   product['name'] = item['name']
                     self.ch2.basic_publish(
                         exchange='',
                         routing_key='products',

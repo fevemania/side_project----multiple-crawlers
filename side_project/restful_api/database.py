@@ -13,7 +13,7 @@ SQLALCHEMY_DATABASE_URI = "postgresql://{DB_USER}:{DB_PASS}@{DB_ADDR}/{DB_NAME}"
         DB_PASS=POSTGRES_PASSWORD, DB_ADDR=POSTGRES_ADDRESS, DB_NAME=POSTGRES_DB)
 engine = create_engine(SQLALCHEMY_DATABASE_URI, echo=True)
 metadata = MetaData()
-db_session = scoped_session(sessionmaker(bind=engine))
+Session = scoped_session(sessionmaker(bind=engine))
 
 #def init_db():
 #    metadata.create_all(bind=engine)
