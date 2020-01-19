@@ -46,7 +46,7 @@ if __name__ == '__main__':
         ch = connection.channel()
         ch.queue_declare(queue='products', durable=True)
         ch.basic_qos(prefetch_count=1)
-        rate_limiter = RateLimiter()
+        rate_limiter = RateLimiter('shopee_crawler')
         redis_cache = RedisCache()
         downloader = Downloader(rate_limiter, cache=redis_cache)
         product_crawler = ProductCrawler(downloader)

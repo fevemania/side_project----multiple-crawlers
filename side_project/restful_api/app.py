@@ -11,7 +11,11 @@ def create_app():
     # link Api to Blueprint
     service = Api(service_blueprint)
     service.add_resource(ProductListResource, '/products/')
-    service.add_resource(ProductResource, '/products/<string:keyword>')
+    service.add_resource(ProductResource, 
+            '/products/<string:keyword>',
+            '/products/<string:keyword>/from=<string:start_date>',
+            '/products/<string:keyword>/to=<string:end_date>',
+            '/products/<string:keyword>/from=<string:start_date>/to=<string:end_date>')
     app.register_blueprint(service_blueprint, url_prefix='/service')
 
     return app

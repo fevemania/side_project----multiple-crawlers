@@ -82,7 +82,7 @@ class CategoryWorker:
                 connection.close()
 
 if __name__ == '__main__':
-    rate_limiter = RateLimiter()
+    rate_limiter = RateLimiter('shopee_crawler')
     redis_cache = RedisCache()
     downloader = Downloader(rate_limiter, cache=redis_cache)
     category_worker = CategoryWorker(downloader)
