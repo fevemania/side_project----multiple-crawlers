@@ -5,6 +5,7 @@ services:
         restart: always
         environment:
             - POSTGRES_MULTIPLE_DATABASES=shopee_db,admin|carousell_db,admin|pinkoi_db,admin
+            - POSTGRES_DB=postgres
             - POSTGRES_USER=admin
             - POSTGRES_PASSWORD=mypass
         ports:
