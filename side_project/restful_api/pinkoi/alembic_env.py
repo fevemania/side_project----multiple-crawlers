@@ -22,7 +22,7 @@ fileConfig(config.config_file_name)
 import os
 import sys
 sys.path.append(os.getcwd())
-from models import metadata
+from pinkoi.models import metadata
 target_metadata = metadata
 import pdb
 

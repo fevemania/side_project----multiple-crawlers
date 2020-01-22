@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint
 from flask_restful import Api
-from views import ProductResource, ProductListResource
+from pinkoi.views import ProductResource, ProductListResource
 import os
 import socket
 import psycopg2

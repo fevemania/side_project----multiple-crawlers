@@ -5,3 +5,4 @@ SQLAlchemy
 psycopg2
 alembic
 marshmallow
+redis
