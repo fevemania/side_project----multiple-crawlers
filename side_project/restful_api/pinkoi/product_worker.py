@@ -11,6 +11,13 @@ from common.downloader import Downloader
 from common.rate_limiter import RateLimiter
 from common.redis_cache import RedisCache
 import pdb
+from datetime import timedelta
+
+POSTGRES_DB = os.environ.get('POSTGRES_DB')
+POSTGRES_USER = os.environ.get('POSTGRES_USER')
+POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD')
+POSTGRES_PORT = os.environ.get('POSTGRES_PORT')
+POSTGRES_ADDRESS = socket.gethostbyname(os.environ.get('POSTGRES_HOST'))
 
 class PinkoiProductCrawler:
     def __init__(self, downloader, fluentd_port=9880):
@@ -19,9 +26,20 @@ class PinkoiProductCrawler:
         self.product_url = 'https://www.pinkoi.com/apiv2/browse?category={}&page={}'
         self.fluentd_url1 = 'http://{}:{}/s3.http.access'.format(address, fluentd_port)
         self.fluentd_url2 = 'http://{}:{}/postgres.access'.format(address, fluentd_port)
+        self.conn = psycopg2.connect(database=POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD, host=POSTGRES_ADDRESS, port=POSTGRES_PORT)
+        self.cursor = conn.cursor()
 
     def run(self):
         cur_date = datetime.now().date()
+        tablename = 'product_{}'.format(new_date)
+        self.cursor.execute("SELECT to_regclass('public.product')")
+        pdb.set_trace()
+        self.cursor.execute("SELECT to_regclass('public.{}').format(tablename)")
+        pdb.set_trace()
+        self.cursor.execute("CREATE TABLE \"{}\" PARTITION OF product FOR VALUES FROM ('{}') TO ('{}')".format(
+            tablename, cur_date, cur_date + timedelta(days=1)))
+        self.conn.commit()
+
         for category_id in range(16):
             if category_id != 7:
                 for page_id in range(1, 501):
@@ -35,7 +53,7 @@ class PinkoiProductCrawler:
                                 product_data = []
                                 for product in product_list:
                                     product_data.append({
-                                        'date': cur_date,
+                                        'date': cur_date.strftime('%Y-%m-%d'),
                                         'currency': product['fields']['currency']['name'],
                                         'price': product['fields']['price'],
                                         'name': product['fields']['title']
@@ -54,6 +72,10 @@ if __name__ == '__main__':
     rate_limiter = RateLimiter('pinkoi_crawler')
     redis_cache = RedisCache()
     downloader = Downloader(rate_limiter, cache=redis_cache)
-    pinkoi_product_crawler = PinkoiProductCrawler(downloader)
-    pinkoi_product_crawler.run()
+    try:
+        pinkoi_product_crawler = PinkoiProductCrawler(downloader)
+        pinkoi_product_crawler.run()
+    except:
+        pinkoi_product_crawler.cursor.close()
+        pinkoi_product_crawler.conn.close()
 
