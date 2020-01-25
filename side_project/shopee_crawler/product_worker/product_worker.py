@@ -10,6 +10,7 @@ from downloader import Downloader
 from rate_limiter import RateLimiter
 from redis_cache import RedisCache
 import pdb
+import psycopg2
 
 class ProductCrawler:
     def __init__(self, downloader, fluentd_port=9880):

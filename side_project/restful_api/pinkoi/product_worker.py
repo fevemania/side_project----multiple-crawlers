@@ -12,6 +12,7 @@ from common.rate_limiter import RateLimiter
 from common.redis_cache import RedisCache
 import pdb
 from datetime import timedelta
+import psycopg2
 
 POSTGRES_DB = os.environ.get('POSTGRES_DB')
 POSTGRES_USER = os.environ.get('POSTGRES_USER')
@@ -27,18 +28,17 @@ class PinkoiProductCrawler:
         self.fluentd_url1 = 'http://{}:{}/s3.http.access'.format(address, fluentd_port)
         self.fluentd_url2 = 'http://{}:{}/postgres.access'.format(address, fluentd_port)
         self.conn = psycopg2.connect(database=POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD, host=POSTGRES_ADDRESS, port=POSTGRES_PORT)
-        self.cursor = conn.cursor()
+        self.cursor = self.conn.cursor()
 
     def run(self):
         cur_date = datetime.now().date()
-        tablename = 'product_{}'.format(new_date)
-        self.cursor.execute("SELECT to_regclass('public.product')")
-        pdb.set_trace()
-        self.cursor.execute("SELECT to_regclass('public.{}').format(tablename)")
-        pdb.set_trace()
-        self.cursor.execute("CREATE TABLE \"{}\" PARTITION OF product FOR VALUES FROM ('{}') TO ('{}')".format(
-            tablename, cur_date, cur_date + timedelta(days=1)))
-        self.conn.commit()
+        tablename = 'product_{}'.format(cur_date)
+        self.cursor.execute("SELECT to_regclass('public.{}')".format(tablename))
+        result = self.cursor.fetchone()
+        if result[0] is None:
+            self.cursor.execute("CREATE TABLE \"{}\" PARTITION OF product FOR VALUES FROM ('{}') TO ('{}')".format(
+                tablename, cur_date, cur_date + timedelta(days=1)))
+            self.conn.commit()
 
         for category_id in range(16):
             if category_id != 7:
@@ -76,6 +76,7 @@ if __name__ == '__main__':
         pinkoi_product_crawler = PinkoiProductCrawler(downloader)
         pinkoi_product_crawler.run()
     except:
+        print('here')
         pinkoi_product_crawler.cursor.close()
         pinkoi_product_crawler.conn.close()
 
