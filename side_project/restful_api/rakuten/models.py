@@ -1,6 +1,6 @@
 from sqlalchemy import Table, Column, Integer, String, Date, Text, Sequence, Index, ForeignKey
 from sqlalchemy.orm import mapper
-from database import metadata, Session
+from rakuten.database import metadata, Session
 from sqlalchemy.dialects.postgresql import JSONB
 from marshmallow import Schema, fields
 

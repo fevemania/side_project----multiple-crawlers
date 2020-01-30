@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, Date, Text, Sequence, Index, ForeignKey
+from sqlalchemy import Table, Column, Integer, String, Date, Text, Sequence, Index, ForeignKey, Float
 from sqlalchemy.orm import mapper
 from pinkoi.database import metadata, Session
 from sqlalchemy.dialects.postgresql import JSONB
@@ -35,7 +35,7 @@ product = Table('product', metadata,
     Column('id', Integer, autoincrement=True, unique=False, primary_key=True),
     Column('date', Date, nullable=False, primary_key=True),
     Column('currency', Text, nullable=False),
-    Column('price', Integer, nullable=False),
+    Column('price', Float, nullable=False),
     Column('name', Text, nullable=False),
     Index('pgroonga_name_index', 'name', postgresql_using='pgroonga'),
     postgresql_partition_by='range(date)'

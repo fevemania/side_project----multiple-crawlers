@@ -12,7 +12,7 @@ COPY side_project/restful_api/app.py app.py
 COPY side_project/restful_api/config_parser.py config_parser.py
 COPY side_project/restful_api/shopee /shopee
 COPY side_project/restful_api/pinkoi /pinkoi
-COPY side_project/restful_api/carousell /carousell
+COPY side_project/restful_api/rakuten /rakuten
 COPY side_project/restful_api/common /common
 #COPY side_project/restful_api/config.py config.py
 #COPY side_project/restful_api/http_status.py http_status.py

@@ -22,7 +22,7 @@ fileConfig(config.config_file_name)
 import os
 import sys
 sys.path.append(os.getcwd())
-from carousell.models import metadata
+from rakuten.models import metadata
 target_metadata = metadata
 import pdb
 
@@ -80,7 +80,8 @@ def run_migrations_online():
     with connectable.connect() as connection:
         context.configure(
             connection=connection, target_metadata=target_metadata,
-            include_object=include_object
+            include_object=include_object,
+            compare_type=True
         )
 
         with context.begin_transaction():
