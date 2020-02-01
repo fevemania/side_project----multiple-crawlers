@@ -6,3 +6,4 @@ psycopg2
 alembic
 marshmallow
 redis
+pika

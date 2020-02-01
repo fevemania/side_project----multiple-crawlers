@@ -13,19 +13,19 @@ services:
         volumes:
             - postgres:/var/lib/postgresql/data
             - './side_project/postgres_init_files:/docker-entrypoint-initdb.d'
-#   rabbitmq:
-#       hostname: rabbitmq
-#       image: rabbitmq
-#       restart: always
-#       environment:
-#           - RABBITMQ_DEFAULT_USER=admin
-#           - RABBITMQ_DEFAULT_PASS=mypass
-#       ports:
-#           - 5672:5672
-#       labels:
-#           NAME: rabbitmq
-#       volumes:
-#           - rabbitmq:/var/lib/rabbitmq
+    rabbitmq:
+        hostname: rabbitmq
+        image: rabbitmq
+        restart: always
+        environment:
+            - RABBITMQ_DEFAULT_USER=admin
+            - RABBITMQ_DEFAULT_PASS=mypass
+        ports:
+            - 5672:5672
+        labels:
+            NAME: rabbitmq
+        volumes:
+            - rabbitmq:/var/lib/rabbitmq
     redis:
         image: redis:alpine
         restart: always
@@ -109,6 +109,9 @@ services:
             - POSTGRES_PORT=5432
             - REDIS_HOST=redis
             - FLUENTD_HOST=fluentd
+            - RABBITMQ_USER=admin
+            - RABBITMQ_PASSWORD=mypass
+            - RABBITMQ_HOST=rabbitmq
         command: ["./wait-for-it.sh", "-t", "30", "postgres:5432", "--", "/bin/bash", "flask_run.sh"]
         volumes:
             - './side_project/restful_api/shopee/migrations:/shopee/migrations'
@@ -135,6 +138,6 @@ services:
 
 volumes:
     postgres:
-#   rabbitmq:
+    rabbitmq:
     redis:
     fluentd:        
