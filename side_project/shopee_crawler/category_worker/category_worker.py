@@ -27,7 +27,7 @@ class CategoryWorker:
                 self.product_queue = self.ch2.queue_declare(queue='products', durable=True, passive=True)
                 while self.product_queue.method.message_count >= 500:
                     time.sleep(10)
-                    self.product_queue = self.product_queue = self.ch2.queue_declare(queue='products', durable=True, passive=True)
+                    self.product_queue = self.ch2.queue_declare(queue='products', durable=True, passive=True)
 
                 html = self.downloader(self.category_url.format(row[0], self.n_items, self.offset))
 

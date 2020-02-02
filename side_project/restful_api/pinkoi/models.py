@@ -20,7 +20,7 @@ class ProductSchema(Schema):
     id = fields.Integer(dump_only=True)
     date = fields.Date()
     currency = fields.String(required=True)
-    price = fields.Integer(required=True)
+    price = fields.Float(required=True)
     name = fields.String(required=True)
 
 # CREATE TABLE product (
