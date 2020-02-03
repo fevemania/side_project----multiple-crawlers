@@ -44,12 +44,12 @@ for row in result:
     existed_date_set.add(row[0])
 
 if objects.get('Contents') is not None:
-    dirname = objects['Contents'][0]['Key'].split('/')[0]
+    dirname = 'shopee'
     if not os.path.isdir(dirname):
         os.mkdir(dirname)
     for obj in objects['Contents']:
         path = obj['Key']
-        if obj['LastModified'].date() > last_modified and path.endswith('.json'):
+        if path.startswith('shopee') and (obj['LastModified'].date() > last_modified) and path.endswith('.json'):
             if obj['LastModified'].date() > newest_modified:
                 newest_modified = obj['LastModified'].date()
             data = []
