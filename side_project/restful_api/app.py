@@ -1,7 +1,7 @@
 from flask import Flask, Blueprint
 from flask_restful import Api
 #from pinkoi.views import ProductResource, ProductListResource
-from rakuten.views import ProductResource, ProductListResource
+from shopee.views import ProductResource, ProductListResource
 import os
 import socket
 import psycopg2

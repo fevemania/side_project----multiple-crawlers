@@ -13,8 +13,7 @@ COPY side_project/restful_api/config_parser.py config_parser.py
 COPY side_project/restful_api/shopee /shopee
 COPY side_project/restful_api/pinkoi /pinkoi
 COPY side_project/restful_api/rakuten /rakuten
-COPY side_project/restful_api/common /common
+
 #COPY side_project/restful_api/config.py config.py
 #COPY side_project/restful_api/http_status.py http_status.py
 #COPY side_project/restful_api/prac2.py prac2.py
-#COPY side_project/restful_api/table_partition_with_date.py table_partition_with_date.py

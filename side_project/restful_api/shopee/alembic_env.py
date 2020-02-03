@@ -52,7 +52,7 @@ def run_migrations_offline():
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = config.get_main_option("sqlalchemy.shopee.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -73,15 +73,15 @@ def run_migrations_online():
     """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
+        prefix="sqlalchemy.shopee.",
         poolclass=pool.NullPool,
-        compare_type=True,
     )
 
     with connectable.connect() as connection:
         context.configure(
             connection=connection, target_metadata=target_metadata,
-            include_object=include_object
+            include_object=include_object,
+            compare_type=True,
         )
 
         with context.begin_transaction():
