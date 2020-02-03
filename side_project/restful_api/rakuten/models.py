@@ -5,12 +5,11 @@ from sqlalchemy.dialects.postgresql import JSONB
 from marshmallow import Schema, fields
 
 class Product(object):
-    def __init__(self, date, currency, price_min, price_max, stock_available, name, shope_id, shope_name):
+    def __init__(self, date, currency, price_min, price_max, name, shope_id, shope_name):
         self.date = date
         self.currency = currency
         self.price_min = price_min
         self.price_max = price_max
-        self.stock_available = stock_available
         self.name = name
         self.shop_id = shop_id
         self.shop_name = shop_name
@@ -27,7 +26,6 @@ class ProductSchema(Schema):
     currency = fields.String(required=True)
     price_min = fields.Float()
     price_max = fields.Float()
-    stock_available = fields.Integer(required=True)
     name = fields.String(required=True)
     shop_id = fields.String(required=True)
     shop_name = fields.String(required=True)
@@ -54,7 +52,6 @@ product = Table('product', metadata,
     Column('currency', String(50), nullable=False),
     Column('price_min', Float),
     Column('price_max', Float),
-    Column('stock_available', Integer, nullable=False),
     Column('name', Text, nullable=False),
     Column('shop_id', Text, nullable=False),
     Column('shop_name', Text, nullable=False),

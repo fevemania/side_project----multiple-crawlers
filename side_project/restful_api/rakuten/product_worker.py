@@ -49,7 +49,6 @@ class RakutenProductWorker:
         products_with_new_fields = []
         for product, additional_data in zip(products, additional_products_data):
             product['currency'] = additional_data['currency']
-            product['stock_available'] = additional_data['stock_available']
             products_with_new_fields.append(product)
         products = products_with_new_fields
         requests.get(self.fluentd_s3_url, json=products)
@@ -60,7 +59,6 @@ class RakutenProductWorker:
                 'currency': product['currency'],
                 'price_min': product['itemPrice']['min'],
                 'price_max': product['itemPrice']['max'],
-                'stock_available': product['stock_available'],
                 'name': product['itemName'],
                 'shop_id': product['shopId'],
                 'shop_name': product['shopName']
