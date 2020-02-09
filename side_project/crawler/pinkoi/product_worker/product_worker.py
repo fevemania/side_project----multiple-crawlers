@@ -2,11 +2,11 @@ import pika
 import os 
 import sys
 from datetime import datetime
-import requests
 import json
 from time import time
 import socket
 import redis
+from common.session_adapter import sess
 from common.downloader import Downloader
 from common.rate_limiter import RateLimiter
 from common.redis_cache import RedisCache
@@ -38,7 +38,7 @@ class PinkoiProductWorker:
         api_data = json.loads(html)
         product_list = api_data['result'][0]['hits']['hits']
         if product_list:
-            requests.get(self.fluentd_s3_url, json=product_list)
+            sess.get(self.fluentd_s3_url, json=product_list)
             product_data = []
             for product in product_list:
                 product_data.append({
@@ -47,7 +47,7 @@ class PinkoiProductWorker:
                     'price': product['fields']['price'],
                     'name': product['fields']['title']
                 })
-            requests.get(self.fluentd_postgres_url, json=product_data)
+            sess.get(self.fluentd_postgres_url, json=product_data)
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def run(self):

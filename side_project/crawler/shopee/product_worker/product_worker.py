@@ -1,31 +1,50 @@
 import os 
 import sys
 import pika
-import requests
 import json
 from time import time
 import socket
 import redis
+from common.session_adapter import sess
 from common.downloader import Downloader
 from common.rate_limiter import RateLimiter
 from common.redis_cache import RedisCache
 import pdb
 import psycopg2
+from datetime import datetime
 
 class ProductWorker:
     def __init__(self, downloader, fluentd_port=9880):
         self.downloader = downloader
         address = socket.gethostbyname(os.environ.get('FLUENTD_HOST', 'localhost'))
         self.product_url = 'https://shopee.tw/api/v2/item/get?itemid={}&shopid={}'
-        self.fluentd_url = 'http://{}:{}/s3.http.access'.format(address, fluentd_port)
+        self.fluentd_url = 'http://{}:{}/s3.{}.http'.format(address, fluentd_port, 'shopee')
+        self.fluentd_postgres_product_url = 'http://{}:{}/postgres.{}.product.http'.format(address, fluentd_port, 'shopee')
 
     def callback(self, ch, method, properties, body):
+        cur_date = datetime.now().date()
         record = json.loads(body)
         html = self.downloader(self.product_url.format(record['itemid'], record['shopid']))
         try:
             if html is not None:
                 api_data = json.loads(html)
-                requests.get(self.fluentd_url, json=api_data)
+                name = api_data['item']['name']
+                itemid = api_data['item']['itemid']
+                sellerid = api_data['item']['shopid']
+                historical_sold = api_data['item']['historical_sold']
+                price_max = api_data['item']['price_max']
+                price_min = api_data['item']['price_min']
+                product = {
+                        'date': cur_date.strftime('%Y-%m-%d'),
+                        'name': name,
+                        'itemid': itemid,
+                        'sellerid': sellerid,
+                        'historical_sold': historical_sold,
+                        'price_max':price_max,
+                        'price_min':price_min
+                        }
+                sess.get(self.fluentd_postgres_product_url, json=product)
+                sess.get(self.fluentd_url, json=api_data)
             else:
                 print('Oh no')
                 print('product html is None')

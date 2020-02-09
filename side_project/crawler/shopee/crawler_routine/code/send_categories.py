@@ -20,7 +20,20 @@ conn = psycopg2.connect(database=POSTGRES_DB, user=POSTGRES_USER, password=POSTG
 cur = conn.cursor()
 headers = {'User-Agent': 'Googlebot',}
 
+existed_date_set = set()
+cur.execute('select date from dates')
+result = cur.fetchall()
+for row in result:
+    existed_date_set.add(row[0])
+
 def send_categories():
+    cur_date = datetime.now().date()
+    if cur_date not in existed_date_set: 
+        tablename = 'product_{}'.format(cur_date)
+        cur.execute("INSERT INTO dates (date) VALUES (%s)", cur_date)
+        cur.execute("CREATE TABLE \"{}\" PARTITION OF product FOR VALUES FROM ('{}') TO ('{}')".format(
+            tablename, cur_date, cur_date + timedelta(days=1)))
+        connection.commit()
     cur.execute('SELECT id, name FROM category')
     result = cur.fetchall()
     credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASSWORD)

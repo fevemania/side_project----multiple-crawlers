@@ -10,6 +10,6 @@ RUN pip install -r /common/requirements.txt
 RUN chmod 0644 /etc/cron.d/job
 RUN chmod 0644 /mnt/crontab.sh
 RUN touch /var/log/cron.log
-RUN apt-get update && apt-get -y install cron
+RUN apt-get update && apt-get -y install vim cron
 
 CMD cron && tail -f /var/log/cron.log

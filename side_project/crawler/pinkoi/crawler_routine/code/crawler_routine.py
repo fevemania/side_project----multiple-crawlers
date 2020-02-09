@@ -9,6 +9,7 @@ import redis
 import pdb
 from datetime import timedelta
 import psycopg2
+import pika
 
 POSTGRES_DB = os.environ.get('POSTGRES_DB')
 POSTGRES_USER = os.environ.get('POSTGRES_USER')

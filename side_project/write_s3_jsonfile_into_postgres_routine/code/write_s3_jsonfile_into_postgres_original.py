@@ -6,10 +6,8 @@ from psycopg2.extras import Json
 import boto3
 import pytz
 import dateutil.parser
-import requests
 from datetime import datetime
 from datetime import timedelta
-import pdb
 
 timestamp_filename = 'log/last_time_of_s3_jsonfile_to_postgres.txt'
 if not os.path.exists(os.path.dirname(timestamp_filename)):
@@ -34,8 +32,6 @@ POSTGRES_USER = os.environ.get('POSTGRES_USER')
 POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD')
 POSTGRES_PORT = os.environ.get('POSTGRES_PORT')
 POSTGRES_ADDRESS = socket.gethostbyname(os.environ.get('POSTGRES_HOST'))
-#address = socket.gethostbyname(os.environ.get('FLUENTD_HOST', 'localhost'))
-#elasticsearch_url = 'http://{}:{}/elasticsearch'.format(address, 9880)
 
 connection = psycopg2.connect(database=POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD, host=POSTGRES_ADDRESS, port=POSTGRES_PORT)
 cursor = connection.cursor()
@@ -57,7 +53,6 @@ if objects.get('Contents') is not None:
             if obj['LastModified'].date() > newest_modified:
                 newest_modified = obj['LastModified'].date()
             data = []
-#           data2 = []
             distinct_date_list = []
             s3.meta.client.download_file('dataforcrawl', path, path)
             with open(path, 'r') as f:
@@ -73,13 +68,10 @@ if objects.get('Contents') is not None:
                     try:
                         json_data1 = json.loads(json_data)
                         name = json_data1['item']['name']
-                        data.append((Json(json.loads(json_data)), name, date))
-#                       data2.append({'data': json.loads(json_data), 'name': name, 'date': date.strftime("%Y-%m-%d")})
+                        data.append((Json(json.loads(json_data)), name, now_utc.date()))
                     except:
                         pass  # json_data1 = {'item': None, 'version': 'xxxx', 'data': None, 'error_msg': None, 'error': -1}
-                offset = 100
-            #   for i in range(0, len(data2), offset):
-            #       requests.put(elasticsearch_url, json=data2[i:i+offset])
+                
                 if distinct_date_list:
                     for new_date_tuple in distinct_date_list:
                         new_date = new_date_tuple[0]

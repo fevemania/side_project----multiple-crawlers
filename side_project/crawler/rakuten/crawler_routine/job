@@ -1,1 +1,1 @@
-42 10 * * * root /bin/bash /mnt/crontab.sh >> /var/log/cron.log
+42 2 * * * root /bin/bash /mnt/crontab.sh >> /var/log/cron.log

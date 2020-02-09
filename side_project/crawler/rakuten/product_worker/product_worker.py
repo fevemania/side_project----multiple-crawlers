@@ -5,7 +5,7 @@ import time
 import socket
 import os
 import json
-import requests
+from common.session_adapter import sess
 import sys
 from common.downloader import Downloader
 from common.rate_limiter import RateLimiter
@@ -50,7 +50,7 @@ class RakutenProductWorker:
             product['currency'] = additional_data['currency']
             products_with_new_fields.append(product)
         products = products_with_new_fields
-        requests.get(self.fluentd_s3_url, json=products)
+        sess.get(self.fluentd_s3_url, json=products)
         products_data = []
         for product in products:
             products_data.append({
@@ -62,7 +62,7 @@ class RakutenProductWorker:
                 'shop_id': product['shopId'],
                 'shop_name': product['shopName']
             })
-        requests.get(self.fluentd_postgres_product_url, json=products_data)
+        sess.get(self.fluentd_postgres_product_url, json=products_data)
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def run(self):
