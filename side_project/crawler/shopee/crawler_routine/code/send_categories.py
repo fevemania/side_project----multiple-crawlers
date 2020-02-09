@@ -6,6 +6,7 @@ import pika
 import os
 import socket
 from datetime import datetime
+from datetime import timedelta
 
 POSTGRES_DB = os.environ.get('POSTGRES_DB')
 POSTGRES_USER = os.environ.get('POSTGRES_USER')
@@ -30,10 +31,10 @@ def send_categories():
     cur_date = datetime.now().date()
     if cur_date not in existed_date_set: 
         tablename = 'product_{}'.format(cur_date)
-        cur.execute("INSERT INTO dates (date) VALUES (%s)", cur_date)
+        cur.execute("INSERT INTO dates (date) VALUES ('{}')".format(cur_date))
         cur.execute("CREATE TABLE \"{}\" PARTITION OF product FOR VALUES FROM ('{}') TO ('{}')".format(
             tablename, cur_date, cur_date + timedelta(days=1)))
-        connection.commit()
+        conn.commit()
     cur.execute('SELECT id, name FROM category')
     result = cur.fetchall()
     credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASSWORD)

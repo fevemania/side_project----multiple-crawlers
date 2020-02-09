@@ -71,7 +71,7 @@ services:
             - RABBITMQ_USER=admin
             - RABBITMQ_PASSWORD=mypass
             - RABBITMQ_HOST=rabbitmq
-        command: ["./wait-for-it.sh", "-t", "30", "postgres:5432", "--", "/bin/bash", "flask_run.sh"]
+        command: ["./wait-for-it.sh", "-t", "300", "postgres:5432", "--", "/bin/bash", "flask_run.sh"]
         volumes:
             - './side_project/restful_api/shopee/migrations:/shopee/migrations'
             - './side_project/restful_api/pinkoi/migrations:/pinkoi/migrations'
@@ -107,7 +107,7 @@ services:
             - POSTGRES_PASSWORD=mypass
             - POSTGRES_HOST=postgres
             - POSTGRES_PORT=5432
-        command: ["./wait-for-it.sh", "-t", "30", "rabbitmq:5672", "--", "python", "-u", "category_crawler.py"]
+        command: ["./wait-for-it.sh", "-t", "300", "rabbitmq:5672", "--", "python", "-u", "category_crawler.py"]
     shopee_crawler_routine:
         build:
             context: .
@@ -122,6 +122,7 @@ services:
             - RABBITMQ_PASSWORD=mypass
             - RABBITMQ_HOST=rabbitmq
     shopee_category_worker:
+        restart: always
         build:
             context: .
             dockerfile: ./side_project/crawler/shopee/category_worker/Dockerfile
@@ -132,8 +133,9 @@ services:
             - RABBITMQ_PASSWORD=mypass
             - RABBITMQ_HOST=rabbitmq
             - REDIS_HOST=redis
-        command: ["./wait-for-it.sh", "-t", "30", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
+        command: ["./wait-for-it.sh", "-t", "300", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
     shopee_product_worker:
+        restart: always
         build:
             context: .
             dockerfile: ./side_project/crawler/shopee/product_worker/Dockerfile
@@ -148,7 +150,7 @@ services:
             - RABBITMQ_HOST=rabbitmq
             - REDIS_HOST=redis
             - FLUENTD_HOST=fluentd
-        command: ["./wait-for-it.sh", "-t", "30", "rabbitmq:5672", "--", "python", "-u", "product_worker.py"]
+        command: ["./wait-for-it.sh", "-t", "300", "rabbitmq:5672", "--", "python", "-u", "product_worker.py"]
    #    command: ["tail", "-f", "/dev/null"]
     rakuten_crawler_routine:
         build:
@@ -164,6 +166,7 @@ services:
             - RABBITMQ_PASSWORD=mypass
             - RABBITMQ_HOST=rabbitmq
     rakuten_category_worker:
+        restart: always
         build:
             context: .
             dockerfile: ./side_project/crawler/rakuten/category_worker/Dockerfile
@@ -178,13 +181,14 @@ services:
             - RABBITMQ_HOST=rabbitmq
             - REDIS_HOST=redis
             - FLUENTD_HOST=fluentd
-        command: ["./wait-for-it.sh", "-t", "30", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
+        command: ["./wait-for-it.sh", "-t", "300", "rabbitmq:5672", "--", "python", "-u", "category_worker.py"]
     rakuten_product_worker:
+        restart: always
         build:
             context: .
             dockerfile: ./side_project/crawler/rakuten/product_worker/Dockerfile
         deploy:
-            replicas: 30
+            replicas: 40
         depends_on:
             - rabbitmq
             - fluentd
@@ -194,7 +198,7 @@ services:
             - RABBITMQ_HOST=rabbitmq
             - REDIS_HOST=redis
             - FLUENTD_HOST=fluentd
-        command: ["./wait-for-it.sh", "-t", "30", "rabbitmq:5672", "--", "python", "-u", "product_worker.py"]
+        command: ["./wait-for-it.sh", "-t", "300", "rabbitmq:5672", "--", "python", "-u", "product_worker.py"]
  #      command: ["tail", "-f", "/dev/null"]
     pinkoi_crawler_routine:
         build:
@@ -210,6 +214,7 @@ services:
             - RABBITMQ_PASSWORD=mypass
             - RABBITMQ_HOST=rabbitmq
     pinkoi_product_worker:
+        restart: always
         build:
             context: .
             dockerfile: ./side_project/crawler/pinkoi/product_worker/Dockerfile
@@ -224,7 +229,7 @@ services:
             - RABBITMQ_HOST=rabbitmq
             - REDIS_HOST=redis
             - FLUENTD_HOST=fluentd
-        command: ["./wait-for-it.sh", "-t", "30", "rabbitmq:5672", "--", "python", "-u", "product_worker.py"]
+        command: ["./wait-for-it.sh", "-t", "300", "rabbitmq:5672", "--", "python", "-u", "product_worker.py"]
     
 
 volumes:
